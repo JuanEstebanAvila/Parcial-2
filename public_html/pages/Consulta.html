@@ -1,0 +1,69 @@
+<html>
+    <head>
+        <title>Consulta</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    </head>
+    <body>
+        <div class="card shadow-sm border-0 mb-4">
+            <div class="card-healer bg-institucional text-white fw bold">
+                Panel de consultas y Filtros 
+            </div>
+            <div class="card-body">
+                <form id="form-consulta" class="row g-3 align-items-end">
+                    <div class="col-3">
+                        <!-- Consulta por id -->
+                        <label for="buscar-id" class="form-label fw-bold">Buscar por Identificacion ID </label>
+                        <div class="input-group">
+                            <input type="text" class ="form-control" id="buscar-id" placeholder="Id a buscar">
+                            <button class="btn btn-outline-primary" type="button" id="btn-buscar-id">
+                            </button>
+                        </div> 
+                    </div>
+                    <!-- Consulta por genero -->
+                    <div class="col-2">
+                        <label for="filtro genero" class="form-label small fw-bold">Genero</label>
+                        <select class="form-select" id="filtro-genero">
+                            <option value="">seleccione</option>
+                            <option value="M"> Masculino</option>
+                            <option value="F"> Femenino</option>
+                        </select>
+                    </div>
+                    <!-- Consulta por categoria -->
+                    <div class="col-3"
+                         <label for="filtro-categoria" class="form-label small fw-bold">Categoria</label>
+                        <select class="form-select" id="filtro-categoria">
+                            <option value="">Todas</option>
+                            <option value="pre benjamin">PreBenjamin</option>
+                            <option value="benjamin"> benjamin</option>
+                            <option value="alevin"> Alevin</option>
+                            <option value="infantil"> Infantil</option>
+                            <option value="cadetes"> Cadetes</option>
+                            <option value="juvenil"> Juvenil</option>
+                            <option value="junior"> Junior </option>
+                            <option value="sub-23"> Sub-23</option>
+                            <option value="absoluta">Absoluta</option>
+                            <option value="veteranos">Veteranos(1,2 y 3)</option>
+                        </select>
+                    </div>
+                    <!-- Consulta por especialidad -->
+                    <div class="col-2">
+                        <label for="filtro-especialidad" class="form-label small fw-bold">Especialidad </label>
+                        <select class="form-select" id="filtro-especialidad">
+                            <option value="">Todas</option>
+                            <option value="Super Sprint">Super Sprint</option>
+                            <option value="Sprint">Sprint</option>
+                            <option value="Olimpica">Olimpica</option>
+                            <option value="Media Distancia">Media Distancia</option>
+                            <option value="Larga Distancia">Larga Distancia</option>
+                            <option value="Ultraman">Ultraman</option>
+                        </select>
+                    </div>
+                    <div class="col-2  text-end">
+                        <button type="button" class="btn btn-secondary w-100" id="btn-limpiar-filtros"> Ver todos </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </body>
+</html>

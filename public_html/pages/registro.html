@@ -1,0 +1,89 @@
+<html>
+    <head>
+        <link rel="stylesheet" href="../css/style.css" type="text/css"/>
+
+        <title>registro</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+
+    </head>
+    <body>
+        <!-- card de registro con imagen -->
+        <div class="card shadow-sm border-0">
+            <img src="../img/registrp.jfif" class="card-img-top" alt="...">
+            <div class="card-header bg-institucional text-white fw-bold">
+                Registro de Nuevo Atleta
+            </div>
+                
+  <div class="card-body">
+    <p class="card-text">Aqui podra realizar su registro como atleta a participar en el triathlon</p>
+  </div>
+  <ul class="list-group list-group-flush">
+    <li class="list-group-item">Podra elegir estandar o cross</li>
+    <li class="list-group-item">si aplica drafting</li>
+    <li class="list-group-item">variante de triathlon</li>
+  </ul>
+  <div class="card-body">
+      <!-- el id permite atrapar el envio  -->
+      <form id="form-registro" class="row g-3">
+          <div class="col-6">
+              <!-- nombre. el for debe coincidir con el input para que se vea mejor -->
+              <label for="nombre" class="form-label fw bold-"> Nombre Completo</label>
+              <input type="text" class="form-control" id="nombre" required>
+
+              <!-- id -->
+              <label for="identificacion" class="form-label fw bold mt-3-"> Identificacion(ID)</label>
+              <input type="text" class="form-control" id="identificacion" required>
+              
+              <div class="row mt-3">
+                  <!-- edad -->
+                    <div class="col-6">
+                      <label for="edad" class="form-label fw bold"> Edad </label>
+                      <input type="number" class="form-control" id="edad" required min="7" max="99">
+                    </div>
+                  <!-- genero lista de seleccion-->
+                    <div class="col-6">
+                        <label for="genero" class="form-label fw bold "> Genero </label>
+                        <select class="form-select" id="genero" required>
+                            <option value="">seleccione</option>
+                            <option value="M"> Masculino</option>
+                            <option value="F"> Femenino</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+          <!-- seleccion de foto -->
+            <div class="col-6">
+                <label for="foto" class="form-label fw bold"> Foto del atleta </label>
+                <input type="file" class="form-control" id="foto" accept="image/*" required>
+                <!-- preferencias de competencia -->
+                <div id="swiping-section" class="mt-4 p-3 border around bd-light">
+                    <h4 class="fw-bold border bottom pb-2"> preferencias de Competencia</h4>
+                    <!-- especialidad -->
+                    <label class="form-label small"> Especialidad(distancia)</label>
+                    <select class="form select mb-2" id="especialidad">
+                        <option value="Super Sprint">Super Sprint</option>
+                        <option value="Sprint">Sprint</option>
+                        <option value="Olimpica">Olimpica</option>
+                        <option value="Media Distancia">Media Distancia</option>
+                        <option value="Larga Distancia">Larga Distancia</option>
+                        <option value="Ultraman">Ultraman</option>
+                    </select>
+                    <!-- seleccion de cross -->
+                    <div class="form-check form-switch mt-3">
+                        <input class="form-check-input" type="checkbox" id="esCross">
+                        <label class="form-check-label fw-bold" for="esCross"> ¿desea participar en modalidad cross?</label>
+                    </div>
+                </div>
+            </div>
+          <!-- guardar formulario o reiniciar -->
+          <div class="col-12 text end mt-4">
+              <button type="reset" class="btn-secondary"> limpiar</button>
+              <button type="submit" class="btn-institucional px-5"> Guardar atleta</button>
+          </div>
+      </form>
+  </div>
+</div>
+    </body>
+</html>
