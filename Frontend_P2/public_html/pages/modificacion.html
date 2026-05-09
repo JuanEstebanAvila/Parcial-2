@@ -1,0 +1,66 @@
+<html>
+    <head>
+        <title>modificacion</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">  
+        <link rel="stylesheet" href="css/style.css">
+    </head>
+    <body>
+        <!-- La clase d-none mantiene este formulario oculto. Solo lo mostraremos con JavaScript
+        cuando el usuario quiera editar a alguien -->
+        <div id="contenedor-actualizar" class="card shadow-warning d-none mb-5">
+            <div class="card-header bg-warning text-dark fw-bold">
+                Modificacion del Atleta
+            </div>
+            <div class="card-body">
+                <form id="form-actualizar" class="row g-3">
+                    <!-- . Aquí guardamos el ID de la base de datos. Si el usuario cambia 
+                    el número de identificación en el cuadro de texto, necesitamos este ID oculto para buscar atleta -->
+                    <input type="hidden" id="modificacion-id-original">
+                    <!-- modificacion del nombre -->
+                    <div class="col-6">
+                        <label for="modificacion-nombre" class="form-label fw-bold"> Nombre Completo</label>
+                        <input type="text" class="form-control" id="modificacion-nombre" required>
+                        <!-- modificacion id -->
+                        <label for="modificacion-identificacion" class="form-label fw-bold mt-3"> Identificacion ID</label>
+                        <input type="text" class="form-control" id="modificacion-identificacion" required>
+                    </div>
+                    <!-- modificacion categoria -->
+                    <div class="col-6">
+                        <label for="modificacion-categoria" class="form-label fw-bold"> Categoria</label>
+                        <select class="form-select" id="modificacion-categoria">
+                            <option value="pre benjamin">PreBenjamin</option>
+                            <option value="benjamin"> benjamin</option>
+                            <option value="alevin"> Alevin</option>
+                            <option value="infantil"> Infantil</option>
+                            <option value="cadetes"> Cadetes</option>
+                            <option value="juvenil"> Juvenil</option>
+                            <option value="junior"> Junior </option>
+                            <option value="sub-23"> Sub-23</option>
+                            <option value="absoluta">Absoluta</option>
+                            <option value="veteranos">Veteranos(1,2 y 3)</option>
+                        </select>
+                        <!-- modificacion de especialidad -->
+                        <label for="modificacion-especialidad" class="form-label fw-bold mt-3">Especialidad</label>
+                        <select class="form-select" id="modificacion-especialidad">
+                            <option value="Super Sprint">Super Sprint</option>
+                            <option value="Sprint">Sprint</option>
+                            <option value="Olimpica">Olimpica</option>
+                            <option value="Media Distancia">Media Distancia</option>
+                            <option value="Larga Distancia">Larga Distancia</option>
+                            <option value="Ultraman">Ultraman</option>
+                        </select>
+                    </div>
+                    <!--botones de actualizar y cancelar
+                    Llama a una función simple en JavaScript que vuelve
+                    a poner la clase d-none al formulario para "cerrarlo" si el usuario se arrepiente. -->
+                    <div class="col-12 text-end mt-4">
+                         <button type="button" class="btn btn-secondary" onclick="ocultarSecciones()">Cancelar</button>
+                         <button type="button" class="btn btn-warning fw-bold px-4">Actualizar datos</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </body>
+</html>
