@@ -1,10 +1,10 @@
-package co.edu.udistrital.backend_p2;
+package test_triatetlamicroservicios;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class TriatletaApplication {
+class TriatletaMicroservicios {
 
 	@Test
 	void contextLoads() {

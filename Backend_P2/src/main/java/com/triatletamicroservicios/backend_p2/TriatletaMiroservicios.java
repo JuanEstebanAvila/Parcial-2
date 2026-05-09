@@ -1,13 +1,13 @@
-package com.triatletamicroservicios.parcial2initializr;
+package com.triatletamicroservicios.backend_p2;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class Parcial2initializrApplication {
+public class TriatletaMiroservicios {
 
 	public static void main(String[] args) {
-		SpringApplication.run(Parcial2initializrApplication.class, args);
+		SpringApplication.run(TriatletaMiroservicios.class, args);
 	}
 
 }
