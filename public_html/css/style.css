@@ -47,3 +47,22 @@ body {
     box-shadow: 0 10px 20px rgba(0,0,0,0.15); /* Sombra más profunda */
     border-color: var(--dorado-ud); /* Este es el color amarillo 'warning' de Bootstrap pero no lo uso */
 }
+/*transicion de la tarjeta*/
+.card-atleta {
+    border: none;
+    border-radius: 12px;
+    transition: all 0.3s ease;
+    overflow: hidden;
+}
+
+/**/
+.card-atleta:hover{
+    transform: translateY(-10px);
+    shadow: 0 10px 20px rgba(0,0,0,0.15);
+}
+
+.foto-atleta{
+    height: 200px;
+    object-fit: cover; /*foto no se altere*/
+    background-color: var(--rojo-ud); 
+}
