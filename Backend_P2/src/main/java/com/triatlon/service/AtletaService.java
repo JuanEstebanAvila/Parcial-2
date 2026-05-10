@@ -1,35 +1,57 @@
 package com.triatlon.service;
 
 import com.triatlon.model.Atleta;
-import com.triatlon.repository.AtletaRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+
 import java.util.List;
-import java.util.Optional;
 
-@Service
-public class AtletaService {
+/**
+ * Interfaz del servicio de Atleta.
+ * Define las operaciones disponibles respetando el principio SOLID de separación de interfaces.
+ */
+public interface AtletaService {
 
-    @Autowired
-    private AtletaRepository atletaRepository;
+    /** Registra un nuevo atleta en el sistema y envía correo de confirmación. */
+    Atleta registrar(Atleta atleta, MultipartFile foto);
 
-    // LISTAR
-    public List<Atleta> obtenerTodos() {
-        return atletaRepository.findAll();
-    }
+    /** Retorna todos los atletas registrados. */
+    List<Atleta> listarTodos();
 
-    // GUARDAR
-    public Atleta guardar(Atleta atleta) {
-        return atletaRepository.save(atleta);
-    }
+    /** Busca un atleta por su id de base de datos. */
+    Atleta buscarPorId(Long id);
 
-    // BUSCAR POR ID
-    public Optional<Atleta> obtenerPorId(Long id) {
-        return atletaRepository.findById(id);
-    }
+    /** Busca un atleta por número de identificación (cédula). */
+    Atleta buscarPorIdentificacion(String identificacion);
 
-    // ELIMINAR
-    public void eliminar(Long id) {
-        atletaRepository.deleteById(id);
-    }
+    /** Actualiza el nombre de un atleta. */
+    Atleta actualizarNombre(Long id, String nuevoNombre);
+
+    /** Actualiza la identificación de un atleta. */
+    Atleta actualizarIdentificacion(Long id, String nuevaIdentificacion);
+
+    /** Actualiza la categoría de un atleta. */
+    Atleta actualizarCategoria(Long id, String nuevaCategoria);
+
+    /** Consulta atletas por género. */
+    List<Atleta> buscarPorGenero(String genero);
+
+    /** Consulta atletas por categoría. */
+    List<Atleta> buscarPorCategoria(String categoria);
+
+    /** Consulta atletas por especialidad. */
+    List<Atleta> buscarPorEspecialidad(String especialidad);
+
+    /** Consulta atletas por modalidad cross. */
+    List<Atleta> buscarPorModalidadCross(Boolean modalidadCross);
+
+    /** Elimina un atleta del sistema. */
+    void eliminar(Long id);
+
+    /**
+     * Determina la categoría automáticamente según la edad del atleta.
+     * @param edad edad del atleta
+     * @return nombre de la categoría correspondiente
+     */
+    String calcularCategoria(int edad);
 }
+
