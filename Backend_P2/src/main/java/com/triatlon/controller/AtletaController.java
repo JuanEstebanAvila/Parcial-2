@@ -35,12 +35,21 @@ public class AtletaController {
      * @param foto   imagen del atleta (opcional)
      * @return atleta registrado con su id generado
      */
-    @RequestMapping(value = "/registrar", method = RequestMethod.POST)
-    public ResponseEntity<Atleta> registrar(
-            @Valid @RequestPart("atleta") Atleta atleta,
-            @RequestPart(value = "foto", required = false) MultipartFile foto) {
-        return ResponseEntity.ok(atletaService.registrar(atleta, foto));
-    }
+    // Con foto (multipart/form-data) - para el frontend
+@RequestMapping(value = "/registrar", method = RequestMethod.POST,
+        consumes = "multipart/form-data")
+public ResponseEntity<Atleta> registrar(
+        @Valid @RequestPart("atleta") Atleta atleta,
+        @RequestPart(value = "foto", required = false) MultipartFile foto) {
+    return ResponseEntity.ok(atletaService.registrar(atleta, foto));
+}
+
+// Sin foto (application/json) - para pruebas con Postman
+@RequestMapping(value = "/registrar/json", method = RequestMethod.POST,
+        consumes = "application/json")
+public ResponseEntity<Atleta> registrarJson(@Valid @RequestBody Atleta atleta) {
+    return ResponseEntity.ok(atletaService.registrar(atleta, null));
+}
 
     /**
      * Lista todos los atletas registrados.

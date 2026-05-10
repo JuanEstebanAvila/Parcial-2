@@ -20,7 +20,7 @@ public class Atleta extends Persona {
      * Categoría del atleta determinada por su edad.
      * Ej: Cadetes, Juvenil, Júnior, Sub-23, Absoluta, Veterano 1/2/3.
      */
-    @NotBlank(message = "La categoría no puede estar vacía")
+    
     private String categoria;
 
     /**
