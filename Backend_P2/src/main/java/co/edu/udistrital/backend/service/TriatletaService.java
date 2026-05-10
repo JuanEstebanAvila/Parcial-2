@@ -2,12 +2,12 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package co.edu.udistrital.backend_p2.service;
+package co.edu.udistrital.backend.service;
 
 /**
  *
  * @author User
  */
-public class Service {
+public class TriatletaService {
     
 }

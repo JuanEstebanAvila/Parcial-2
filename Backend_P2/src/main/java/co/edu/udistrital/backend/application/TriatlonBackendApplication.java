@@ -1,13 +1,13 @@
-package com.triatletamicroservicios.backend_p2;
+package co.edu.udistrital.backend.application;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class TriatletaMiroservicios {
+public class TriatlonBackendApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(TriatletaMiroservicios.class, args);
+		SpringApplication.run(TriatlonBackendApplication.class, args);
 	}
 
 }
