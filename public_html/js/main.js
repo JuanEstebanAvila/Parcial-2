@@ -1,12 +1,12 @@
 //datos de prueba
-const atletasDePrueba =[
+let listaAtletas =[
     {id: 1, nombre:"Julian", identificacion: "123345", categoria:"Sub-23", especialidad:"Sprint"},
     {id: 45, nombre:"yotas marcelo", identificacion:"1515", categoria:"Benjamin", especialidad:"Ultraman"}
 ];
 //recarga
 function refrescarInterfaz() {
-    renderizarTabla(listaAtletas);
-    renderizarTarjetas(listaAtletas);
+    CrearTabla(listaAtletas);
+    CrearTarjetas(listaAtletas);
 }
 
 //la eliminacion antes de la confirmacion
@@ -42,7 +42,7 @@ function ejecutarEliminacionReal(idABorrar){
     listaAtletas = listaAtletas.filter(a => a.id !== idABorrar);
     
     //se limpia la interfaz
-    ocualtarSecciones(); //se endonde el de alerta
+    ocultarSecciones(); //se endonde el de alerta
     refrescarInterfaz();//vuelve a dibujar la tabla sin el atleta
     mostrarMensaje('exitoso','atleta eliminado');
 }
@@ -64,31 +64,63 @@ function prepararModificacion(idRecibido){
         document.getElementById('contenedor-actualizar').classList.remove('d-none');
         document.getElementById('contenedor-eliminar').classList.add('d-none');
         
-        document.getElementById('contenedor-actualizar').scrollIntoView({behavior: 'smoot'});
+        document.getElementById('contenedor-actualizar').scrollIntoView({behavior: 'smooth'});
     }
 }
-//document.getElementById('form-actualizar').addEventListener('submit', function(e) {
-//    e.preventDefault(); // Evitamos que la página se recargue
-//
-//    // 3. Obtenemos el ID que guardamos en el campo oculto
-//    const idABuscar = parseInt(document.getElementById('update-id-original').value);
-//
-//    // 4. Buscamos la posición (índice) de ese atleta en nuestro arreglo
-//    const indice = listaAtletas.findIndex(a => a.id === idABuscar);
-//
-//    if (indice !== -1) {
-//        // 5. Actualizamos los campos uno por uno
-//        listaAtletas[indice].nombre = document.getElementById('update-nombre').value;
-//        listaAtletas[indice].identificacion = document.getElementById('update-identificacion').value;
-//        listaAtletas[indice].categoria = document.getElementById('update-categoria').value;
-//        listaAtletas[indice].especialidad = document.getElementById('update-especialidad').value;
-//
-//        // 6. Finalizamos la operación
-//        ocultarSecciones();
-//        refrescarInterfaz();
-//        mostrarMensaje('warning', 'Información del atleta actualizada correctamente.');
-//    }
-//});
+//evento para el envío del formulario de modificacion o ejecutar modificacion
+document.getElementById('form-actualizar').addEventListener('submit', function(e) {
+    //su funcion es evitar que la página se recargue o se mueva a otra URL
+    e.preventDefault();
+    // se obtiene el ID que guardamos en el campo oculto
+    const idABuscar = parseInt(document.getElementById('modificacion-id-original').value);
+    //Buscamos la posicion (indice) de ese atleta en nuestro arreglo
+    const indice = listaAtletas.findIndex(a => a.id === idABuscar);
+
+    if (indice !== -1) {
+        // Actualizamos los campos uno por uno
+        listaAtletas[indice].nombre = document.getElementById('modificacion-nombre').value;
+        listaAtletas[indice].identificacion = document.getElementById('modificacion-identificacion').value;
+        listaAtletas[indice].categoria = document.getElementById('modificacion-categoria').value;
+        listaAtletas[indice].especialidad = document.getElementById('modificacion-especialidad').value;
+
+        // demas para finalizar la operacion
+        ocultarSecciones();
+        refrescarInterfaz();
+        mostrarMensaje('warning', 'Se actualizo al altleta correctamente');
+    }
+});
+
+// para el formulario de registro (index.html o registro.html)
+const formRegistro = document.getElementById('form-registro');
+
+if (formRegistro){
+    formRegistro.addEventListener('submit', function(e){
+        e.preventDefault();
+        
+        //se crea el nuevo objeto de atleta capturando los valores
+        const nuevoAtleta ={
+            //se crea un id respecto de tiempo siempre seran distintos
+            //es una forma que vi por un video 
+            id: Date.now(), 
+            nombre: document.getElementById('nombre').value,
+            identificacion: document.getElementById('identificacion').value,
+            edad: document.getElementById('edad').value,
+            genero: document.getElementById('genero').value,
+            categoria: "se calcula autimaticamente ",
+            especialidad: document.getElementById('especialidad').value,
+            esCross: document.getElementById('esCross').checked
+        };
+        //.push añade uno o más elementos al final de un array 
+        listaAtletas.push(nuevoAtleta);
+        
+        formRegistro.reset();
+        mostrarMensaje('sucess', 'se guardo atleta nuevo');
+        
+        if (typeof refrescarInterfaz === "function"){
+            refrescarInterfaz();
+        }
+    });
+}
 /*  
  * se hace la tabla
  */
@@ -101,7 +133,7 @@ function prepararModificacion(idRecibido){
 function CrearTabla(listaAtletas){
     // se busca el cuerpo de la tabla por su ID
     //Esta es la conexión entre JS y el HTML
-    const cuerpoTabla = document.getElementById('tabla-atletas');
+    const cuerpoTabla = document.getElementById('tabla-atletas-body');
     
     //se limpia o borra el contenido de la tabla ya creado para evitar la duplicacion de la informacion
     cuerpoTabla.innerHTML="";
@@ -109,7 +141,7 @@ function CrearTabla(listaAtletas){
     //se recorre la lista de atletas
     // le dice toma la lista de atletas y por cada atleta individual que encuentres,
     // ejecuta el código que está entre llaves
-    ListaTablas.forEach(atleta => {
+    listaAtletas.forEach(atleta => {
         //se crea una fila(tr) en memoria
         const fila = document.createElement('tr');
         
@@ -125,7 +157,7 @@ function CrearTabla(listaAtletas){
             <button class="btn btn-sm btn-warning" onclick="prepararModificacion(${atleta.id})">
                 <i class="bi bi-pencil"></i>
             </button>
-            <button class="btn btn-sm btn-danger" onclick="prepararEliminacion(${atleta.id}
+            <button class="btn btn-sm btn-danger" onclick="prepararEliminacion(${atleta.id})">
                 <i class="bi bi-trash"></i>
             </button>
         </td>
@@ -133,15 +165,9 @@ function CrearTabla(listaAtletas){
         //se agrega la fila al cuerpo
         //toma la fila que acabamos de armar con sus datos y botones, y la "pega" físicamente
         //dentro del HTML para que el usuario la vea
-        cuerpo.Tabla.appendChild(fila);
+        cuerpoTabla.appendChild(fila);
     });
 }
-//se ejecuta cargar la pagina
-//espera a que todo el HTML se haya dibujado y los archivos CSS se hayan cargado antes de intentar llenar la tabla
-document.addEventListener('DOMContentLoaded',()=>{
-    Dibujartabla(atletaDePrueba);
-});
-
 // se crean las tarjetas de forma automatica
 function CrearTarjetas(listaAtletas){
     //busca en el html id=vista-tarjetas
@@ -151,7 +177,7 @@ function CrearTarjetas(listaAtletas){
     
     listaAtletas.forEach(atleta=>{
         //le asignamos colores a las especialidades
-        const colorClase = atleta.especialidad === 'Ultraman' ? 'border-primary':'border-primary';
+        const colorClase = atleta.especialidad === 'Ultraman' ? 'border-danger' : 'border-primary';
         //El operador += significa añadir a lo que ya existe
         contenedor.innerHTML +=`
         <div class="col-3">
@@ -183,33 +209,44 @@ function CrearTarjetas(listaAtletas){
     });
 }
 
+//se ejecuta cargar la pagina
+//espera a que todo el HTML se haya dibujado y los archivos CSS se hayan cargado antes de intentar llenar la tabla
 //los listeners de los botones que creamos para listado.html
-const btnTabla = document.getElementById('vista-table-btn');
-const btnTarjetas = document.getElementById('vista-cards-btn');
-const vistaTabla = document.getElementById('vista-tabla');
-const vistaTarjetas = document.getElementsByClassName('vista-tarjetas');
+document.addEventListener('DOMContentLoaded', () => {
+    refrescarInterfaz();
 
+    const btnTabla = document.getElementById('vista-table-btn');
+    const btnTarjetas = document.getElementById('vista-cards-btn');
+    const vistaTabla = document.getElementById('vista-tabla');
+    const vistaTarjetas = document.getElementById('vista-tarjetas');
+
+    btnTabla.addEventListener('click', () => cambiarVista('tabla'));
+    btnTarjetas.addEventListener('click', () => cambiarVista('tarjetas'));
+    
+    
 //cambio de forma de visualizar tabla y cartas
 //Sirve para que la pagina decida qué dibujar en la pantalla dependiendo el estado de la variable llamada vista
 //Comprueba si el valor de esa variable es exactamente el texto "tabla"
-function cambiarVista(vista){
+
+    function cambiarVista(vista){
     if (vista === 'tabla'){
         //mostrar tabla, se ocultan las tarjetas
         vistaTabla.classList.remove('d-none');
-        vistaTarjetas.classList.add('d-node');
+        vistaTarjetas.classList.add('d-none');
         //se muestra activado boton de tabla desactivado boton tarjetas
         btnTabla.classList.add('active');
         btnTarjetas.classList.remove('active');
     }else{
         //contrario 
         vistaTabla.classList.add('d-none');
-        vistaTarjetas.classList.remove('d-node');
+        vistaTarjetas.classList.remove('d-none');
 
         btnTabla.classList.remove('active');
         btnTarjetas.classList.add('active');
     }
 }
-//se asigna eventos a botones
-btnTabla.addEventListener('click',()=> cambiarVista('tabla'));
-//solo es si con el tabla este tarjetas es para el else
-btnTarjetas.addEventListener('click',()=> cambiarVista('tarjetas'));
+ btnTabla.addEventListener('click', () => cambiarVista('tabla'));
+    btnTarjetas.addEventListener('click', () => cambiarVista('tarjetas'));
+});
+
+
