@@ -8,6 +8,6 @@ package co.edu.udistrital.backend.model;
  *
  * @author User
  */
-public class TriatletaModel {
+public class ResponseDTO {
     
 }
