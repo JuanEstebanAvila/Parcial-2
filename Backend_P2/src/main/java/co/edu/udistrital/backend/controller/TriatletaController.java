@@ -4,6 +4,7 @@ import co.edu.udistrital.backend.model.Atleta;
 import co.edu.udistrital.backend.model.RequestDTO;
 import co.edu.udistrital.backend.model.ResponseDTO;
 import co.edu.udistrital.backend.service.IMicroservicios;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -37,9 +38,9 @@ public class TriatletaController {
      */
     
     //método para modificar el nombre de un triatleta
-    @RequestMapping(value=("/modificarnombre/{id}"), method=RequestMethod.PATCH)
-    public ResponseEntity<ResponseDTO> modificarNombre(@PathVariable("id") Long id, @RequestBody RequestDTO nombreactualizado){
-        ResponseDTO nuevonombre = service.PatchNombre(id, nombreactualizado);
+    @RequestMapping(value=("/modificarnombre/{identificacion}"), method=RequestMethod.PATCH)
+    public ResponseEntity<ResponseDTO> modificarNombre(@PathVariable("identificacion") Long id, @RequestBody RequestDTO nombreactualizado){
+        ResponseDTO nuevonombre = service.patchNombre(id, nombreactualizado);
         return ResponseEntity.ok(nuevonombre);
     }
     
@@ -63,8 +64,57 @@ public class TriatletaController {
     //método para consultar a un triatleta por su identificación 
     @RequestMapping(value = ("/consultar/{identificacion}"), method = RequestMethod.GET)
     public ResponseEntity<ResponseDTO> consultarTriatleta (@PathVariable("identificacion") Long identificacion){
-        return ResponseEntity.ok(service.getTriatleta(identificacion));
+        ResponseDTO atleta = service.getAtletaIdentificacion(identificacion);
+        return ResponseEntity.ok(atleta);
     }
     
-    //método para consultar triatletas por 
+    //método para consultar triatletas por género
+    //Posibles respuestas H/M
+    @RequestMapping(value=("/grupo/consultar/{genero}"), method=RequestMethod.GET)
+    public ResponseEntity<List<ResponseDTO>> consultarGenero(@PathVariable("genero") String genero){
+        List<ResponseDTO> atletasGenero = service.getTriatletasGenero(genero);
+        return ResponseEntity.ok(atletasGenero);
+    }
+    
+    //método para consultar triatletas por categoría
+    @RequestMapping(value=("/grupo/consultar/{categoria}"), method=RequestMethod.GET)
+    public ResponseEntity<List<ResponseDTO>> consultarCategoria(@PathVariable("categoria") String categoria){
+        List<ResponseDTO> atletasCategoria = service.getTriatletasCategoria(categoria);
+        return ResponseEntity.ok(atletasCategoria);
+    }
+    
+    //método para consultar triatleta por especialidad
+    @RequestMapping(value=("/grupo/consultar/{especialidad}"), method=RequestMethod.GET)
+    public ResponseEntity<List<ResponseDTO>> consultarEspecialidad (@PathVariable("especialidad") String especialidad){
+        List<ResponseDTO> atletasEspecialidad = service.getTriatletasEspecialidad(especialidad);
+        return ResponseEntity.ok(atletasEspecialidad);
+    }
+    
+    //método para consultar por modalidad Cross 
+    //Posibles respuestas S/N
+    @RequestMapping(value=("/grupo/consultar/{cross}"), method = RequestMethod.GET)
+    public ResponseEntity<List<ResponseDTO>> consultarCross(@PathVariable("cross") boolean modalidadCross){
+        List<ResponseDTO> atletasModalidadCross = service.getTriatletasCross(modalidadCross);
+        return ResponseEntity.ok(atletasModalidadCross);
+    }
+    
+    //Método para eliminar un triatleta 
+    @RequestMapping(value=("/eliminar/{identificacion}"), method = RequestMethod.DELETE)
+    public void eliminarAtleta(@PathVariable("identificacion") Long id){
+        service.deleteTriatleta(id);
+    }
+    
+    //Método para crear un triatleta 
+    @RequestMapping(value=("/crearatleta"), method = RequestMethod.POST)
+    public ResponseEntity<ResponseDTO> crearAtleta(@RequestBody RequestDTO datosNuevoAtleta){
+        ResponseDTO nuevoAtleta = service.postAtleta(datosNuevoAtleta);
+        return ResponseEntity.ok(nuevoAtleta);
+    }
+    
+    //Método para mostrar el listado de todos los triatletas 
+    @RequestMapping(value=("/mostraratletas"), method=RequestMethod.GET)
+    public ResponseEntity<List<ResponseDTO>> mostrarTriatletas(){
+        List<ResponseDTO> atletas = service.getTriatletas();
+        return ResponseEntity.ok(atletas);
+    }
 }
