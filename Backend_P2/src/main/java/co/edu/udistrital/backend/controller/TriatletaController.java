@@ -93,7 +93,7 @@ public class TriatletaController {
     //Posibles respuestas S/N
     @RequestMapping(value=("/grupo/consultar/{cross}"), method = RequestMethod.GET)
     public ResponseEntity<List<ResponseDTO>> consultarCross(@PathVariable("cross") boolean modalidadCross){
-        List<ResponseDTO> atletasModalidadCross = service.getTriatletasCross(modalidadCross);
+        List<ResponseDTO> atletasModalidadCross = (List<ResponseDTO>) service.getTriatletasCross(modalidadCross);
         return ResponseEntity.ok(atletasModalidadCross);
     }
     
