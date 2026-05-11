@@ -1,6 +1,5 @@
 package co.edu.udistrital.backend.controller;
 
-import co.edu.udistrital.backend.model.Atleta;
 import co.edu.udistrital.backend.model.RequestDTO;
 import co.edu.udistrital.backend.model.ResponseDTO;
 import co.edu.udistrital.backend.service.IMicroservicios;
