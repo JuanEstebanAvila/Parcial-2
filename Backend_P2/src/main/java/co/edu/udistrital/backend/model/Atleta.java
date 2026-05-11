@@ -11,7 +11,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 
-public class Atleta extends Persona {
+public class Atleta extends Personaf {
 
     private String categoria;
 

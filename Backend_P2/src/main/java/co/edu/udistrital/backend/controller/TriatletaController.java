@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
  * Encargada de los diferentes endpoints y de la delegación de la lógica del negocio al service
  * 
  * @author Grupo Programación Avanzada
- * @version 1.0
+ * @version 1.1
  */
 
 @RestController

@@ -1,26 +1,15 @@
 package co.edu.udistrital.backend.model;
 
-import com.triatlon.model.*;
-import jakarta.persistence.*;
-import lombok.*;
+/**
+ * Clase padre de la clase Atleta
+ * Facilita la escalabilidad del proyecto si se quieren agregar otras entidades 
+ * @author Grupo Programación Avanzada 
+ * @version 1.0
+ */
 
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
 
-@MappedSuperclass
 public class Persona {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
-    private String nombre;
-
-    private String identificacion;
-
-    private Integer edad;
-
-    private String genero;
+    
+    
+    
 }
