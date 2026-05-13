@@ -25,7 +25,7 @@ public class CORS implements WebMvcConfigurer{
          * Se esta definiendo con:
          * addMapping que puede acceder a todos los endpoints
          * allowedMethods que puede acceder a todos los métodos (GET, PATCH, DELETE, etc)
-         * allowedOrigins es el puerto del Front
+         * allowedOrigins que cualquiera pueda consumir los microservicios del servidor
          * allowedHeaders permite todas las cabeceras que mande el Front
          * maxAge cuanto tiempo el navegador debe "recordar" esta configuración 
          */
