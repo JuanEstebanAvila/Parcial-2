@@ -1,17 +1,28 @@
 package co.edu.udistrital.backend.model;
 
-import co.edu.udistrital.backend.model.*;
 import jakarta.persistence.Entity;
-import lombok.*;
+import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+/**
+ * Entidad que representa a un triatleta 
+ * hereda los atributos básicos de Persona y agrega los atributos
+ * propios de un atleta.
+ *
+ * @author Grupo Programación Avanzada
+ * @version 2.0
+ */
 
 @Entity
-
+@Table(name = "atleta")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-
-public class Atleta extends Personaf {
+public class Atleta extends Persona {
 
     private String categoria;
 
@@ -21,5 +32,3 @@ public class Atleta extends Personaf {
 
     private String foto;
 }
-
-//Esta es la entidad del programa pero ¿donde esta estableciendo el nombre de la tabla de la base de datos?

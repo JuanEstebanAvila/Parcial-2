@@ -9,6 +9,9 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 * ...backend.application, no ve ...backend.controller, ...backend.service, etc.
 * entonces toco meterle eso para decirle 
 * a Spring que escanee todo el paquete backend y todos sus subpaquetes 
+* 
+* @author Grupo Programación Avanzada
+* @version 1.1
 * */
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 //import org.springframework.boot.autoconfigure.domain.EntityScan;
@@ -18,6 +21,7 @@ import org.springframework.boot.persistence.autoconfigure.EntityScan;
 @EnableJpaRepositories(basePackages = "co.edu.udistrital.backend.repository")
 @EntityScan(basePackages = "co.edu.udistrital.backend.model")
 public class TriatlonBackendApplication {
+
     public static void main(String[] args) {
         SpringApplication.run(TriatlonBackendApplication.class, args);
     }

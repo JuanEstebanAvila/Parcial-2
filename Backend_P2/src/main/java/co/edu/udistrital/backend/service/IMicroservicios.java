@@ -18,7 +18,7 @@ public interface IMicroservicios {
     //Permite cambiar el atributo "identificación" de un atleta 
     ResponseDTO patchIdentificacion(Long  identificacion, RequestDTO identificacionactualizada);
     //Permite cambiar el atributo "categoría" de un atleta 
-    ResponseDTO patchCategoria(String categoria, RequestDTO categoriaactualizada);
+    ResponseDTO patchCategoria(Long categoria, RequestDTO categoriaactualizada);
     //Devuelve un atleta según su identificación (cédula)
     ResponseDTO getAtletaIdentificacion(Long identificacion);
     //Devuelve los atletas que sean mujeres o que sean hombres 

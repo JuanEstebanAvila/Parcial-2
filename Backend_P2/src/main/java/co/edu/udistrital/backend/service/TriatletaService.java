@@ -15,155 +15,185 @@ import org.springframework.stereotype.Service;
 /**
  * Clase encargada de contener la lógica de negocio.
  * Implementa todos los métodos del interfaz IMicroservicios.
+ *
  * @author Grupo Programación Avanzada
- * @version 2.0
+ * @version 6.0
  */
+
 @Service
 public class TriatletaService implements IMicroservicios {
 
+    //Auntoinyección del repository por parte de Spring
     @Autowired
     private AtletaRepository repository;
-    
+
+    //Uso del objeto JavaMailSender para el envio del correo al usuario 
     @Autowired
     private JavaMailSender mailSender;
-    
-    //Lee el correo del application.properties
-    @Value("${spring.mail.username}")
-    private String remitente;
 
-    /** Convierte un Atleta en ResponseDTO para enviarlo al cliente */
-   private ResponseDTO toResponse(Atleta a) {
-    long identificacion = 0;
-    if (a.getIdentificacion() != null) {
-        identificacion = Long.parseLong(a.getIdentificacion());
-    }
-    return new ResponseDTO(
-        a.getId(),
-        a.getNombre(),
-        identificacion,
-        a.getEdad(),
-        a.getGenero(),
-        a.getCategoria(),
-        a.getEspecialidad(),
-        a.getModalidadCross() != null ? a.getModalidadCross() : false,
-        a.getCorreo(),
-        a.getFoto()
-    );
-}
+    //Asunto del correo de registro, definido en application.properties. 
+    @Value("${correo.asunto}")
+    private String asuntoCorreo;
 
-    /** Calcula la categoría automáticamente según la edad */
-    private String calcularCategoria(int edad) {
-        if (edad == 7) return "Pre-benjamín";
-        if (edad <= 9) return "Benjamín";
-        if (edad <= 11) return "Alevín";
-        if (edad <= 13) return "Infantil";
-        if (edad <= 15) return "Cadetes";
-        if (edad <= 17) return "Juvenil";
-        if (edad <= 19) return "Júnior";
-        if (edad <= 23) return "Sub-23";
-        if (edad <= 39) return "Absoluta";
-        if (edad <= 49) return "Veterano 1";
-        if (edad <= 59) return "Veterano 2";
-        return "Veterano 3";
-    }
+    //Plantilla del cuerpo del correo, definida en application.properties. 
+    @Value("${correo.mensaje}")
+    private String plantillaCorreo;
 
+    //CREAR ATLETA - MÉTODO POST
     @Override
-    public ResponseDTO postAtleta(RequestDTO datos) {
-        Atleta atleta = new Atleta();
-        atleta.setNombre(datos.getNombre());
-        atleta.setIdentificacion(String.valueOf(datos.getIdentificacion()));
-        atleta.setEdad(datos.getEdad());
-        atleta.setGenero(datos.getGenero());
-        atleta.setCategoria(calcularCategoria(datos.getEdad()));
-        atleta.setEspecialidad(datos.getEspecialidad());
-        atleta.setModalidadCross(datos.isCross());
-        atleta.setCorreo(datos.getEmail());
-        return toResponse(repository.save(atleta));
+    public ResponseDTO postAtleta(RequestDTO datosNuevoAtleta) {
+        if (repository.findByIdentificacion(String.valueOf(datosNuevoAtleta.getIdentificacion())).isPresent()) {
+            throw new RuntimeException(
+                    "Ya existe un atleta con la identificación " + datosNuevoAtleta.getIdentificacion());
+        }
+        Atleta atleta = aEntidad(datosNuevoAtleta);
+        atleta.setCategoria(calcularCategoria(datosNuevoAtleta.getEdad()));
+        Atleta guardado = repository.save(atleta);
+        try {
+            enviarCorreo(datosNuevoAtleta);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return aResponse(guardado);
+    }
+
+    //MOSTRAR - MÉTODO GET
+    @Override
+    public ResponseDTO getAtletaIdentificacion(Long identificacion) {
+        Atleta atleta = repository.findByIdentificacion(String.valueOf(identificacion))
+                .orElseThrow(() -> new RuntimeException(
+                        "No existe un atleta con identificación " + identificacion));
+        return aResponse(atleta);
     }
 
     @Override
     public List<ResponseDTO> getTriatletas() {
-        return repository.findAll().stream()
-                .map(this::toResponse)
-                .collect(Collectors.toList());
-    }
-
-    @Override
-    public ResponseDTO getAtletaIdentificacion(Long identificacion) {
-        return repository.findById(identificacion)
-                .map(this::toResponse)
-                .orElseThrow(() -> new RuntimeException("Atleta no encontrado"));
-    }
-
-    @Override
-    public ResponseDTO patchNombre(Long id, RequestDTO datos) {
-        Atleta atleta = repository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Atleta no encontrado"));
-        atleta.setNombre(datos.getNombre());
-        return toResponse(repository.save(atleta));
-    }
-
-    @Override
-    public ResponseDTO patchIdentificacion(Long id, RequestDTO datos) {
-        Atleta atleta = repository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Atleta no encontrado"));
-        atleta.setIdentificacion(String.valueOf(datos.getIdentificacion()));
-        return toResponse(repository.save(atleta));
-    }
-
-    @Override
-    public ResponseDTO patchCategoria(String categoria, RequestDTO datos) {
-        List<Atleta> atletas = repository.findByCategoria(categoria);
-        if (atletas.isEmpty()) throw new RuntimeException("No encontrado");
-        Atleta atleta = atletas.get(0);
-        atleta.setCategoria(datos.getCategoria());
-        return toResponse(repository.save(atleta));
+        return repository.findAll().stream().map(this::aResponse).collect(Collectors.toList());
     }
 
     @Override
     public List<ResponseDTO> getTriatletasGenero(String genero) {
-        return repository.findByGenero(genero).stream()
-                .map(this::toResponse).collect(Collectors.toList());
+        return repository.findByGenero(genero).stream().map(this::aResponse).collect(Collectors.toList());
     }
 
     @Override
     public List<ResponseDTO> getTriatletasCategoria(String categoria) {
-        return repository.findByCategoria(categoria).stream()
-                .map(this::toResponse).collect(Collectors.toList());
+        return repository.findByCategoria(categoria).stream().map(this::aResponse).collect(Collectors.toList());
     }
 
     @Override
     public List<ResponseDTO> getTriatletasEspecialidad(String especialidad) {
-        return repository.findByEspecialidad(especialidad).stream()
-                .map(this::toResponse).collect(Collectors.toList());
+        return repository.findByEspecialidad(especialidad).stream().map(this::aResponse).collect(Collectors.toList());
     }
 
     @Override
     public List<ResponseDTO> getTriatletasCross(boolean modalidadCross) {
-        return repository.findByModalidadCross(modalidadCross).stream()
-                .map(this::toResponse).collect(Collectors.toList());
+        return repository.findByModalidadCross(modalidadCross).stream().map(this::aResponse).collect(Collectors.toList());
+    }
+
+    //MODIFICAR - MÉTODO PATCH 
+    @Override
+    public ResponseDTO patchNombre(Long id, RequestDTO nombreactualizado) {
+        String idStr = String.valueOf(id);
+        int filas = repository.actualizarNombre(idStr, nombreactualizado.getNombre());
+        if (filas == 0) {
+            throw new RuntimeException("No existe un atleta con identificación " + id);
+        }
+        return getAtletaIdentificacion(id);
     }
 
     @Override
-    public ResponseDTO deleteTriatleta(Long id) {
-        Atleta atleta = repository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Atleta no encontrado"));
-        repository.deleteById(id);
-        return toResponse(atleta);
+    public ResponseDTO patchIdentificacion(Long identificacion, RequestDTO identificacionactualizada) {
+        String actual = String.valueOf(identificacion);
+        String nueva  = identificacionactualizada.getIdentificacion();
+        int filas = repository.actualizarIdentificacion(actual, nueva);
+        if (filas == 0) {
+            throw new RuntimeException("No existe un atleta con identificación " + identificacion);
+        }
+        return repository.findByIdentificacion(nueva).map(this::aResponse)
+                .orElseThrow(() -> new RuntimeException("Error al recuperar el atleta actualizado"));
     }
-    
+
     @Override
-    public void enviarCorreo(RequestDTO atleta){
+    public ResponseDTO patchCategoria(Long id, RequestDTO categoriaactualizada) {
+        String idStr = String.valueOf(id);
+        int filas = repository.actualizarCategoria(idStr, categoriaactualizada.getCategoria());
+        if (filas == 0) {
+            throw new RuntimeException("No existe un atleta con identificación " + id);
+        }
+        return getAtletaIdentificacion(id);
+    }
+
+    //BORRAR - MÉTODO DELETE
+    @Override
+    public ResponseDTO deleteTriatleta(Long id) {
+        Atleta atleta = repository.findByIdentificacion(String.valueOf(id))
+                .orElseThrow(() -> new RuntimeException(
+                        "No existe un atleta con identificación " + id));
+        ResponseDTO eliminado = aResponse(atleta);
+        repository.delete(atleta);
+        return eliminado;
+    }
+
+    // CORREO
+    /**
+     * Código creado por : Daniel Españadero
+     * Obtenido de : https://github.com/DanielEspanadero/java-mail.git
+     */
+    @Override
+    public void enviarCorreo(RequestDTO atleta) {
+        String contenido = plantillaCorreo.replace("{nombre}", atleta.getNombre()); //"Plantilla" definida en el properties
         SimpleMailMessage correo = new SimpleMailMessage();
-        correo.setTo(atleta.getEmail()); //Se envía a la dirección que haya ingresado el atleta 
-        correo.setSubject("¡BIENVENID@ AL TRIATLÓN!"); //Asunto del correo 
-        
-        String contenido = "¡¡Hola " + atleta.getNombre() + ", gracias por incribirte "
-                + "y bienevid@ al triatlón!!" ; //Mensaje que estará en el correo 
-        correo.setText(contenido); //Contenido del correo 
-        
-        correo.setFrom(remitente); //Correo remitente
-        
+        correo.setTo(atleta.getCorreo());//A quier se envía
+        correo.setSubject(asuntoCorreo);//El asunto del correo 
+        correo.setText(contenido);//El contenido del correo 
         mailSender.send(correo);
+    }
+
+
+    //Convierte un RequestDTO en una entidad Atleta. 
+    private Atleta aEntidad(RequestDTO d) {
+        Atleta a = new Atleta();
+        a.setNombre(d.getNombre());
+        a.setIdentificacion(d.getIdentificacion());
+        a.setEdad(d.getEdad());
+        a.setGenero(d.getGenero());
+        a.setCorreo(d.getCorreo());
+        a.setEspecialidad(d.getEspecialidad());
+        a.setModalidadCross(d.getModalidadCross());
+        a.setFoto(d.getFoto());
+        return a;
+    }
+
+    //Convierte una entidad Atleta en un ResponseDTO.
+    private ResponseDTO aResponse(Atleta a) {
+        ResponseDTO r = new ResponseDTO();
+        r.setId(a.getId());
+        r.setNombre(a.getNombre());
+        r.setIdentificacion(a.getIdentificacion());
+        r.setEdad(a.getEdad());
+        r.setGenero(a.getGenero());
+        r.setCorreo(a.getCorreo());
+        r.setCategoria(a.getCategoria());
+        r.setEspecialidad(a.getEspecialidad());
+        r.setModalidadCross(a.getModalidadCross());
+        r.setFoto(a.getFoto());
+        return r;
+    }
+
+    // Calcula la categoría del atleta según su edad. 
+    private String calcularCategoria(int edad) {
+        if (edad == 7)   return "Pre-benjamín";
+        if (edad <= 9)   return "Benjamín";
+        if (edad <= 11)  return "Alevín";
+        if (edad <= 13)  return "Infantil";
+        if (edad <= 15)  return "Cadetes";
+        if (edad <= 17)  return "Juvenil";
+        if (edad <= 19)  return "Júnior";
+        if (edad <= 23)  return "Sub-23";
+        if (edad <= 39)  return "Absoluta";
+        if (edad <= 49)  return "Veterano 1";
+        if (edad <= 59)  return "Veterano 2";
+        return "Veterano 3";
     }
 }

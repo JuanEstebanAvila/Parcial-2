@@ -1,40 +1,67 @@
 package co.edu.udistrital.backend.model;
 
-import lombok.Data;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
 /**
  * Clase del DTO encargada de recibir los datos provenientes del cliente,
- * medida de seguridad extra al no exponer la entidad "Atleta",  
- * aunque tenga los mismos atributos que la entidad.
+ * medida de seguridad extra al no exponer la entidad "Atleta", 
+ * aplicando las respectivas validaciones a cada atributo.
+ * 
  * @author Grupo Programación Avanzada 
- * @version 1.0
+ * @version 1.3
  */
 
 
-
 public class RequestDTO {
-    
-private String nombre;
-private Long identificacion;
-private Integer edad;
-private String genero;
-private String categoria;
-private String especialidad;
-private Boolean cross; 
-private String email;
-private String foto;
 
-    public RequestDTO(String nombre, Long identificacion, Integer edad, String genero, String categoria, String especialidad, Boolean cross, String email, String foto) {
+    @NotBlank(message = "El nombre no puede estar vacío")
+    private String nombre;
+
+    @NotBlank(message = "La identificación es obligatoria")
+    private String identificacion;
+
+    @NotNull(message = "La edad es obligatoria")
+    @Min(value = 7,   message = "La edad mínima permitida es 7 años")
+    private Integer edad;
+
+    @NotBlank(message = "El género es obligatorio")
+    private String genero;
+
+    @NotBlank(message = "El correo es obligatorio")
+    @Email(message = "El correo electrónico no tiene un formato válido")
+    private String correo;
+
+    private String especialidad;
+
+    private Boolean modalidadCross;
+    
+    private String categoria;
+
+    private String foto;
+    
+    //Constructor vacío 
+    public RequestDTO() {
+    }
+    
+    //Contructor con todos los argumentos
+    public RequestDTO(String nombre, String identificacion, Integer edad, String genero, String correo, String especialidad, Boolean modalidadCross, String categoria, String foto) {
         this.nombre = nombre;
         this.identificacion = identificacion;
         this.edad = edad;
         this.genero = genero;
-        this.categoria = categoria;
+        this.correo = correo;
         this.especialidad = especialidad;
-        this.cross = cross;
-        this.email = email;
+        this.modalidadCross = modalidadCross;
+        this.categoria = categoria;
         this.foto = foto;
     }
+
+    
+    
+    //Getters y Setters
 
     public String getNombre() {
         return nombre;
@@ -44,11 +71,11 @@ private String foto;
         this.nombre = nombre;
     }
 
-    public Long getIdentificacion() {
+    public String getIdentificacion() {
         return identificacion;
     }
 
-    public void setIdentificacion(Long identificacion) {
+    public void setIdentificacion(String identificacion) {
         this.identificacion = identificacion;
     }
 
@@ -68,12 +95,12 @@ private String foto;
         this.genero = genero;
     }
 
-    public String getCategoria() {
-        return categoria;
+    public String getCorreo() {
+        return correo;
     }
 
-    public void setCategoria(String categoria) {
-        this.categoria = categoria;
+    public void setCorreo(String correo) {
+        this.correo = correo;
     }
 
     public String getEspecialidad() {
@@ -84,20 +111,20 @@ private String foto;
         this.especialidad = especialidad;
     }
 
-    public Boolean isCross() {
-        return cross;
+    public Boolean getModalidadCross() {
+        return modalidadCross;
     }
 
-    public void setCross(Boolean cross) {
-        this.cross = cross;
+    public void setModalidadCross(Boolean modalidadCross) {
+        this.modalidadCross = modalidadCross;
     }
 
-    public String getEmail() {
-        return email;
+    public String getCategoria() {
+        return categoria;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
+    public void setCategoria(String categoria) {
+        this.categoria = categoria;
     }
 
     public String getFoto() {
@@ -108,7 +135,4 @@ private String foto;
         this.foto = foto;
     }
 
-    
 }
-
-//Para el request aún falta agregar que reciba como parametro la foto del atleta 
