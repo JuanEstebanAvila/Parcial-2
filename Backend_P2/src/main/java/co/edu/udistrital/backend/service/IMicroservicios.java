@@ -35,4 +35,6 @@ public interface IMicroservicios {
     ResponseDTO postAtleta(RequestDTO datosNuevoAtleta);
     //Devuelve todos los Atletas
     List<ResponseDTO> getTriatletas();
+    //Método para enviar correo de verificación al atleta
+    public void enviarCorreo(RequestDTO atleta);
 }

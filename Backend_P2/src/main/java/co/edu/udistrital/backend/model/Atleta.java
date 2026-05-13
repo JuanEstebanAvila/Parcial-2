@@ -21,3 +21,5 @@ public class Atleta extends Personaf {
 
     private String foto;
 }
+
+//Esta es la entidad del programa pero ¿donde esta estableciendo el nombre de la tabla de la base de datos?

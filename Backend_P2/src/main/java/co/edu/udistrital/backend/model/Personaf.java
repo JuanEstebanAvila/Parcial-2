@@ -25,3 +25,5 @@ public class Personaf {
     // Campo agregado para el envío del correo de registro (requerimiento del parcial)
     private String correo;
 }
+
+//Super clase que le hereda a la entidad de nuestro aplicativo

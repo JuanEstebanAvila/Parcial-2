@@ -29,6 +29,6 @@ public class CORS implements WebMvcConfigurer{
          * allowedHeaders permite todas las cabeceras que mande el Front
          * maxAge cuanto tiempo el navegador debe "recordar" esta configuración 
          */
-        registry.addMapping("/**").allowedMethods("*").allowedOrigins("http://localhost:8383").allowedHeaders("*").maxAge(3600);
+        registry.addMapping("/**").allowedMethods("*").allowedOrigins("*").allowedHeaders("*").maxAge(3600);
     }
 }

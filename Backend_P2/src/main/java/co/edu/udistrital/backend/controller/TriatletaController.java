@@ -67,34 +67,34 @@ public class TriatletaController {
         return ResponseEntity.ok(atleta);
     }
     
-// Consultar triatletas por género (H/M)
-// CREDITOS A LA FUENTE: estructura base del controller provista por el profesor
+    // Consultar triatletas por género (H/M)
+    // CREDITOS A LA FUENTE: estructura base del controller provista por el profesor
     @RequestMapping(value = ("/grupo/consultar/genero/{genero}"), method = RequestMethod.GET)
     public ResponseEntity<List<ResponseDTO>> consultarGenero(@PathVariable("genero") String genero) {
         List<ResponseDTO> atletasGenero = service.getTriatletasGenero(genero);
         return ResponseEntity.ok(atletasGenero);
     }
 
-// Consultar triatletas por categoría
-@RequestMapping(value=("/grupo/consultar/categoria/{categoria}"), method=RequestMethod.GET)
-public ResponseEntity<List<ResponseDTO>> consultarCategoria(@PathVariable("categoria") String categoria){
+    // Consultar triatletas por categoría
+    @RequestMapping(value=("/grupo/consultar/categoria/{categoria}"), method=RequestMethod.GET)
+    public ResponseEntity<List<ResponseDTO>> consultarCategoria(@PathVariable("categoria") String categoria){
     List<ResponseDTO> atletasCategoria = service.getTriatletasCategoria(categoria);
     return ResponseEntity.ok(atletasCategoria);
-}
+    }
 
-// Consultar triatletas por especialidad
-@RequestMapping(value=("/grupo/consultar/especialidad/{especialidad}"), method=RequestMethod.GET)
-public ResponseEntity<List<ResponseDTO>> consultarEspecialidad(@PathVariable("especialidad") String especialidad){
+    // Consultar triatletas por especialidad
+    @RequestMapping(value=("/grupo/consultar/especialidad/{especialidad}"), method=RequestMethod.GET)
+    public ResponseEntity<List<ResponseDTO>> consultarEspecialidad(@PathVariable("especialidad") String especialidad){
     List<ResponseDTO> atletasEspecialidad = service.getTriatletasEspecialidad(especialidad);
     return ResponseEntity.ok(atletasEspecialidad);
-}
+    }
 
-// Consultar triatletas por modalidad Cross (true/false)
-@RequestMapping(value=("/grupo/consultar/cross/{cross}"), method=RequestMethod.GET)
-public ResponseEntity<List<ResponseDTO>> consultarCross(@PathVariable("cross") boolean modalidadCross){
+    // Consultar triatletas por modalidad Cross (true/false)
+    @RequestMapping(value=("/grupo/consultar/cross/{cross}"), method=RequestMethod.GET)
+    public ResponseEntity<List<ResponseDTO>> consultarCross(@PathVariable("cross") boolean modalidadCross){
     List<ResponseDTO> atletasModalidadCross = service.getTriatletasCross(modalidadCross);
     return ResponseEntity.ok(atletasModalidadCross);
-}
+    }
     
     //Método para eliminar un triatleta 
     @RequestMapping(value=("/eliminar/{identificacion}"), method = RequestMethod.DELETE)
@@ -104,9 +104,10 @@ public ResponseEntity<List<ResponseDTO>> consultarCross(@PathVariable("cross") b
     
     //Método para crear un triatleta 
     @RequestMapping(value=("/crearatleta"), method = RequestMethod.POST)
-    public ResponseEntity<ResponseDTO> crearAtleta(@RequestBody RequestDTO datosNuevoAtleta){
-        ResponseDTO nuevoAtleta = service.postAtleta(datosNuevoAtleta);
-        return ResponseEntity.ok(nuevoAtleta);
+    public ResponseEntity<String> crearAtleta(@RequestBody RequestDTO datosNuevoAtleta){
+        service.postAtleta(datosNuevoAtleta);
+        service.enviarCorreo(datosNuevoAtleta);
+        return ResponseEntity.ok("Registro exitoso");
     }
     
     //Método para mostrar el listado de todos los triatletas 
@@ -115,4 +116,7 @@ public ResponseEntity<List<ResponseDTO>> consultarCross(@PathVariable("cross") b
         List<ResponseDTO> atletas = service.getTriatletas();
         return ResponseEntity.ok(atletas);
     }
-}
+    }
+
+//Falta agregar el manejo de errores 
+

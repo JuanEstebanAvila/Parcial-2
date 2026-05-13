@@ -7,6 +7,8 @@ import co.edu.udistrital.backend.repository.AtletaRepository;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
 /**
@@ -20,6 +22,9 @@ public class TriatletaService implements IMicroservicios {
 
     @Autowired
     private AtletaRepository repository;
+    
+    @Autowired
+    private JavaMailSender mailSender;
 
     /** Convierte un Atleta en ResponseDTO para enviarlo al cliente */
    private ResponseDTO toResponse(Atleta a) {
@@ -140,5 +145,19 @@ public class TriatletaService implements IMicroservicios {
                 .orElseThrow(() -> new RuntimeException("Atleta no encontrado"));
         repository.deleteById(id);
         return toResponse(atleta);
+    }
+    
+    @Override
+    public void enviarCorreo(RequestDTO atleta){
+        SimpleMailMessage correo = new SimpleMailMessage();
+        correo.setTo(atleta.getEmail()); //Se envía a la dirección que haya ingresado el atleta 
+        correo.setSubject("¡BIENVENID@ AL TRIATLÓN!"); //Asunto del correo 
+        
+        String contenido = "¡¡Hola " + atleta.getNombre() + ", gracias por incribirte "
+                + "y bienevid@ al triatlón!!" ; //Mensaje que estará en el correo 
+        correo.setText(contenido); //Contenido del correo 
+        correo.setFrom("atjuan.vina7@gmail.com"); //Correo remitente
+        
+        mailSender.send(correo);
     }
 }

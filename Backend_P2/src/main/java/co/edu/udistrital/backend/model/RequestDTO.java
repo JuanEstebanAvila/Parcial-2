@@ -1,30 +1,30 @@
 package co.edu.udistrital.backend.model;
 
+import lombok.Data;
+
 /**
  * Clase del DTO encargada de recibir los datos provenientes del cliente,
- * medida de seguridad extra al no exponer la entidad de Atleta 
- * aunque tenga los mismos atributos que la entidad
+ * medida de seguridad extra al no exponer la entidad "Atleta",  
+ * aunque tenga los mismos atributos que la entidad.
  * @author Grupo Programación Avanzada 
  * @version 1.0
  */
 
-//No usamos las anotaciones de loombok
+
+
 public class RequestDTO {
+    
 private String nombre;
-// cambien el lon y int que son primitivos por sus weappers 
-// porque en postamn me genero error probando patch
 private Long identificacion;
 private Integer edad;
 private String genero;
 private String categoria;
 private String especialidad;
-private Boolean cross; // Aqui paso de bolean a Bolean por lo mismo del patch en el postman
+private Boolean cross; 
 private String email;
+private String foto;
 
-//Constructor , tambien cambie esto por lo del patch en el postman
-
-    public RequestDTO(String nombre, Long identificacion, Integer edad, String genero,
-            String categoria, String especialidad, Boolean cross, String email) {
+    public RequestDTO(String nombre, Long identificacion, Integer edad, String genero, String categoria, String especialidad, Boolean cross, String email, String foto) {
         this.nombre = nombre;
         this.identificacion = identificacion;
         this.edad = edad;
@@ -33,9 +33,8 @@ private String email;
         this.especialidad = especialidad;
         this.cross = cross;
         this.email = email;
+        this.foto = foto;
     }
-
-//Getters y Setters de los atributos 
 
     public String getNombre() {
         return nombre;
@@ -45,19 +44,19 @@ private String email;
         this.nombre = nombre;
     }
 
-    public long getIdentificacion() {
+    public Long getIdentificacion() {
         return identificacion;
     }
 
-    public void setIdentificacion(long identificacion) {
+    public void setIdentificacion(Long identificacion) {
         this.identificacion = identificacion;
     }
 
-    public int getEdad() {
+    public Integer getEdad() {
         return edad;
     }
 
-    public void setEdad(int edad) {
+    public void setEdad(Integer edad) {
         this.edad = edad;
     }
 
@@ -84,12 +83,12 @@ private String email;
     public void setEspecialidad(String especialidad) {
         this.especialidad = especialidad;
     }
-// Tambien arreglado este por lo del patch en el postman que no me estaba funcionando 
+
     public Boolean isCross() {
         return cross;
     }
 
-    public void setCross(boolean cross) {
+    public void setCross(Boolean cross) {
         this.cross = cross;
     }
 
@@ -100,5 +99,16 @@ private String email;
     public void setEmail(String email) {
         this.email = email;
     }
-   
+
+    public String getFoto() {
+        return foto;
+    }
+
+    public void setFoto(String foto) {
+        this.foto = foto;
+    }
+
+    
 }
+
+//Para el request aún falta agregar que reciba como parametro la foto del atleta 
