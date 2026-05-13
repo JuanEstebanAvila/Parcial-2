@@ -6,9 +6,34 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">  
-        <link rel="stylesheet" href="css/style.css">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+        <link rel="stylesheet" href="../css/style.css" type="text/css"/>
     </head>
     <body>
+        
+    <!-- barra de navegacion (nav bar) -->
+    <!--sticky-top esto sirve por si queremos que la nav bar baje con nosotros--> 
+    <nav class="navbar navbar-expand navbar-dark bg-institucional shadow-sm">
+        <div class="container">
+
+            <!-- logo ud como boton por etiqueta <a> y href -->
+
+            <a class="navbar-brand d-flex align-items-center" href="../index.html">
+                <img src="../img/Logo Oficial UD sin color en png.png" alt="img-UD" width="80" class="me-2"/>
+                <div class="lh-1">
+                    <span class="fw-bold d-block">TRIATLÓN </span>
+                    <small class="style-subtitle" style="font-size: 0.7rem;">Ingeniería de Sistemas</small>
+                </div>
+            </a>
+
+            <div class="navbar-nav">
+                <a class="nav-link" href="../index.html">Inicio</a>
+                <a class="nav-link" href="../pages/listado.html">Gestionar atletas</a>
+                <a class="nav-link" href="consulta.html">Consulta atletas</a>
+            </div>
+        </div>
+    </nav>
+        
         <!-- card de registro con imagen -->
         <div class="card shadow-sm border-0">
             <img src="../img/registrp.jfif" class="card-img-top" alt="...">
@@ -16,74 +41,120 @@
                 Registro de Nuevo Atleta
             </div>
                 
-  <div class="card-body">
-    <p class="card-text">Aqui podra realizar su registro como atleta a participar en el triathlon</p>
-  </div>
-  <ul class="list-group list-group-flush">
-    <li class="list-group-item">Podra elegir estandar o cross</li>
-    <li class="list-group-item">si aplica drafting</li>
-    <li class="list-group-item">variante de triathlon</li>
-  </ul>
-  <div class="card-body">
-      <!-- el id permite atrapar el envio  -->
-      <form id="form-registro" class="row g-3">
-          <div class="col-6">
-              <!-- nombre. el for debe coincidir con el input para que se vea mejor -->
-              <label for="nombre" class="form-label fw bold-"> Nombre Completo</label>
-              <input type="text" class="form-control" id="nombre" required>
+            <div class="card-body">
+                <p class="card-text">Aqui podra realizar su registro como atleta a participar en el triathlon</p>
+            </div>
+            <div class="card-body">
+                <!-- el id permite atrapar el envio  -->
+                <form id="form-registro" class="row g-3">
+                    <div class="col-6">
+                        <!-- nombre. el for debe coincidir con el input para que se vea mejor -->
+                        <label for="nombre" class="form-label fw-bold-"> Nombre Completo</label>
+                        <input type="text" class="form-control" id="nombre" required>
 
-              <!-- id -->
-              <label for="identificacion" class="form-label fw bold mt-3-"> Identificacion(ID)</label>
-              <input type="text" class="form-control" id="identificacion" required>
-              
-              <div class="row mt-3">
-                  <!-- edad -->
-                    <div class="col-6">
-                      <label for="edad" class="form-label fw bold"> Edad </label>
-                      <input type="number" class="form-control" id="edad" required min="7" max="99">
+                        <!-- id -->
+                        <label for="identificacion" class="form-label fw-bold mt-3-"> Identificacion(ID)</label>
+                        <input type="text" class="form-control" id="identificacion" required>
+
+                        <div class="row mt-3">
+                          <!-- edad -->
+                            <div class="col-6">
+                              <label for="edad" class="form-label fw-bold"> Edad </label>
+                              <input type="number" class="form-control" id="edad" required min="7" max="99">
+                              <div id="categoria-calculada" class="badge bg-warning text-dark mt-1 d-none"></div>
+                            </div>
+                          <!-- genero lista de seleccion-->
+                            <div class="col-6">
+                                <label for="genero" class="form-label fw-bold "> Genero </label>
+                                <select class="form-select" id="genero" required>
+                                    <option value="">seleccione</option>
+                                    <option value="M"> Masculino</option>
+                                    <option value="F"> Femenino</option>
+                                </select>
+                            </div>
+                        </div>
                     </div>
-                  <!-- genero lista de seleccion-->
+                  <!-- seleccion de foto -->
                     <div class="col-6">
-                        <label for="genero" class="form-label fw bold "> Genero </label>
-                        <select class="form-select" id="genero" required>
-                            <option value="">seleccione</option>
-                            <option value="M"> Masculino</option>
-                            <option value="F"> Femenino</option>
-                        </select>
+                        <label for="foto" class="form-label fw-bold"> Foto del atleta </label>
+                        <input type="file" class="form-control" id="foto" accept="image/*" required>
                     </div>
-                </div>
-            </div>
-          <!-- seleccion de foto -->
-            <div class="col-6">
-                <label for="foto" class="form-label fw bold"> Foto del atleta </label>
-                <input type="file" class="form-control" id="foto" accept="image/*" required>
-                <!-- preferencias de competencia -->
-                <div id="swiping-section" class="mt-4 p-3 border around bd-light">
-                    <h4 class="fw-bold border bottom pb-2"> preferencias de Competencia</h4>
-                    <!-- especialidad -->
-                    <label class="form-label small"> Especialidad(distancia)</label>
-                    <select class="form select mb-2" id="especialidad">
-                        <option value="Super Sprint">Super Sprint</option>
-                        <option value="Sprint">Sprint</option>
-                        <option value="Olimpica">Olimpica</option>
-                        <option value="Media Distancia">Media Distancia</option>
-                        <option value="Larga Distancia">Larga Distancia</option>
-                        <option value="Ultraman">Ultraman</option>
-                    </select>
+                        
+                    <!-- preferencias de competencia -->
+                    
+                    <div id="swiping-section" class="mt-4 p-3 border around bd-light" style="overflow: hidden;">
+                        <h4 class="fw-bold border bottom pb-2"> preferencias de Competencia</h4>
+
+                        <!-- especialidad a escoger -->
+                        <div class="col-12 mt-4">
+                            <label class="form-label fw-bold d-block text-center mb-3">Seleccione su Especialidad (Deslice y dele click para elegir)</label>
+                            <input type="hidden" name="especialidad" id="input-especialidad" required>
+
+                            <div class="swiper mySwiper">
+                                <div class="swiper-wrapper" >
+                                    <div class="swiper-slide" data-especialidad="Super Sprint">
+                                        <div class="specialty-card shadow">
+                                            <img src="../img/Super Spring.jfif">
+                                            <div class="p-2 text-center bg-dark text-white">Super Sprint</div>
+                                        </div>
+                                    </div>
+                                    <div class="swiper-slide" data-especialidad="Sprint">
+                                        <div class="specialty-card shadow">
+                                            <img src="../img/Spring.jfif" alt="Sprint">
+                                            <div class="p-2 text-center bg-dark text-white">Sprint</div>
+                                        </div>
+                                    </div>
+                                    <div class="swiper-slide" data-especialidad="Olimpica">
+                                        <div class="specialty-card shadow">
+                                            <img src="img/Olimpica.jpg" alt="Olimpica">
+                                            <div class="p-2 text-center bg-dark text-white">Olimpica</div>
+                                        </div>
+                                    </div>
+                                    <div class="swiper-slide" data-especialidad="Media Distancia">
+                                        <div class="specialty-card shadow">
+                                            <img src="img/Media Distancia.jpg" alt="Media Distancia">
+                                            <div class="p-2 text-center bg-dark text-white">Media Distancia</div>
+                                        </div>
+                                    </div>
+                                    <div class="swiper-slide" data-especialidad="Larga Distancia">
+                                        <div class="specialty-card shadow">
+                                            <img src="img/Larga Distancia.jpg" alt="Larga Distancia">
+                                            <div class="p-2 text-center bg-dark text-white">Larga Distancia</div>
+                                        </div>
+                                    </div>
+                                    <div class="swiper-slide" data-especialidad="Ultraman">
+                                        <div class="specialty-card shadow">
+                                            <img src="img/Ultraman.jpg" alt="Ultraman">
+                                            <div class="p-2 text-center bg-dark text-white">Ultraman</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="swiper-pagination"></div>
+                                
+                                <div id="especialidad-seleccionada" class="alert alert-warning mt-2 py-2 d-none">
+                                    <i class="bi bi-check-circle"></i> Especialidad elegida: <strong id="texto-especialidad"></strong>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div>
                     <!-- seleccion de cross -->
-                    <div class="form-check form-switch mt-3">
-                        <input class="form-check-input" type="checkbox" id="esCross">
-                        <label class="form-check-label fw-bold" for="esCross"> ¿desea participar en modalidad cross?</label>
+                        <div class="form-check form-switch mt-3">
+                            <input class="form-check-input" type="checkbox" id="esCross">
+                            <label class="form-check-label fw-bold" for="esCross"> ¿desea participar en modalidad cross?</label>
+                        </div>
                     </div>
-                </div>
+         
+                    <!-- guardar formulario o reiniciar -->
+                    <div class="col-12 text-end mt-4">
+                        <button type="reset" class="btn btn-secondary"> limpiar</button>
+                        <button type="submit" class="btn btn-warning px-5 fw-bold"> Guardar atleta</button>
+                    </div>
+                </form>
             </div>
-          <!-- guardar formulario o reiniciar -->
-          <div class="col-12 text end mt-4">
-              <button type="reset" class="btn-secondary"> limpiar</button>
-              <button type="submit" class="btn-institucional px-5"> Guardar atleta</button>
-          </div>
-      </form>
-  </div>
-</div>
+        </div>
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+    <script src="../js/main.js"></script>
     </body>
 </html>

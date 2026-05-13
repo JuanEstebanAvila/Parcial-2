@@ -3,8 +3,6 @@
     --rojo-ud: #8c1919;    /* colores tomados de la editorial ud y todo */
     --dorado-ud: #fdb400; 
     --gris-fondo: #f4f7f6; 
-    --negro: #000;
-    --blanco: #fff;
 }
 
 /* Configuracion General */
@@ -19,6 +17,10 @@ body {
 /* Clases personalizadas */
 .bg-institucional {
     background-color: var(--rojo-ud) !important;
+}
+
+.text-institucional {
+    color: var(--rojo-ud) !important;
 }
 
 .text-dorado {
@@ -66,3 +68,61 @@ body {
     object-fit: cover; /*foto no se altere*/
     background-color: var(--rojo-ud); 
 }
+
+
+
+.mySwiper {
+    width: 100%;
+    padding-bottom: 40px; /* espacio para la paginación */
+    overflow: hidden;
+}
+
+.swiper-slide {
+    background-position: center;
+    background-size: cover;
+    width: 220px;
+    height: auto;
+    cursor:pointer;
+    transition: transform 0.3s ease;
+    pointer-events: auto !important;
+    transform-origin: center center;
+    width: 100%;
+    height: 100%;
+    pointer-events: auto !important;
+}
+
+.swiper-slide * {
+    pointer-events: auto !important;
+}
+
+.specialty-card {
+    border-radius: 15px;
+    overflow: hidden;
+    border: 4px solid transparent;
+    background: white;
+    transition: all 0.3s ease;
+}
+
+/*esto se activa al dar click*/
+.specialty-card.selected {
+    border-color: var(--dorado-ud);
+    transform: scale(1.05);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+}
+
+.specialty-card img {
+    width: 100%;
+    height: 150px;
+    object-fit: cover;
+    display: block;
+}
+
+.specialty-label {
+    padding: 10px;
+    text-align: center;
+    background-color: var(--rojo-ud);
+    color: white;
+    font-weight: bold;
+}
+
+

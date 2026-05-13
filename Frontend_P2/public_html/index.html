@@ -19,7 +19,7 @@
 <body>
     
     <!-- barra de navegacion (nav bar) -->
-    
+    <!--sticky-top esto sirve por si queremos que la nav bar baje con nosotros--> 
     <nav class="navbar navbar-expand navbar-dark bg-institucional shadow-sm">
         <div class="container">
 
@@ -35,8 +35,9 @@
 
             <div class="navbar-nav">
                 <a class="nav-link" href="index.html">Inicio</a>
-                <a class="nav-link" href="#">link-2</a>
-                <a class="nav-link" href="#">link-3</a>
+                <a class="nav-link" href="pages/registro.html">Registro</a>
+                <a class="nav-link" href="pages/listado.html">Gestionar atletas</a>
+                <a class="nav-link" href="pages/consulta.html">Consulta atletas</a>
             </div>
         </div>
     </nav>
@@ -84,7 +85,7 @@
                     <!-- Después, con JavaScript, se busca este elemento
                     para cambiar el "0" por el número real de atletas que 
                     se tenga desde la base de datos. -->
-                    <p class="display-6" id="count-atletas">0</p>
+                    <p class="display-6" id="count-atletas"></p>
                     <small class="text-muted">Inscritos actualmente</small>
                 </div>
             </div>
@@ -108,7 +109,7 @@
         </div>
     </div>
 </section>
-
+        
 <section id="info-deporte" class="py-5 bg-white">
     <div class="container">
         <h2 class="text-center mb-4 fw-bold ">Sobre el Triatlón</h2>
@@ -139,8 +140,39 @@
                 </ul>
             </div>
         </div>
-    </div>
-</section>  
+        <section id="info-deporte-2" class="py-5 bg-white shadow-sm my-4 rounded-3 animar-entrada">
+            <div class="container">
+                <h2 class="text-center fw-bold mb-5 border-bottom pb-3"> Informacion Tecnica del Triatlon</h2>        
+                <div class="row g-4 text-center">
+                    <div class="col-md-4">
+                        <div class="p-4 border-end">
+                            <i class="bi bi-Moisture fs-1 text-primary"></i>
+                            <h4 class="mt-3 text-danger"> Natacion </h4>
+                            <p class="small">Comunmente se realiza en aguas abiertas. Es la fase de mayor resistencia técnica</p>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-4">
+                        <div class="p-4 border-end">
+                            <i class="bi bi-bicycle fs-1 text-success"></i>
+                            <h4 class="mt-3 text-danger">Ciclismo</h4>
+                            <p class="small"> No se permite ayuda de los demas "drafting". El "drafting" depende de la reglamentación de la carrera.</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="p-4">
+                            <i class="bi bi-person-walking fs-1 text-danger"></i>
+                            <h4 class="mt-3 text-danger"> Carrera </h4>
+                            <p class="small"> La etapa final donde la fatiga acumulada pone a prueba la mente del atleta.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-5 p-4 bg-light rounded border-start border-4 border-danger">
+                    <h5><i class="bi bi-tree-fill text-succes"></i> Modalidad cross </h5>
+                    <p class="mb-0"> a diferencia del triatlón convencional, el ciclismo se realiza en **MTB (Mountain Bike)** sobre terrenos irregulares. Es ideal para los amantes de la naturaleza y la técnica extrema.</p>
+                </div>
+            </div>
+        </section>  
         
         <!-- tabla de categorias -->
 <section id="categorias" class="py-5">
