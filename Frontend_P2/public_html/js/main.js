@@ -1,17 +1,61 @@
-const API_URL = "http://localhost:8080/api/atletas";
+/**
+ * @fileoverview Módulo principal del FrontEnd para la gestión de atletas de Triatlón UD.
+ * Maneja la comunicación con el BackEnd mediante Fetch API, y controla la visualización
+ * dinámica de tablas, tarjetas, carrusel de especialidades, formularios de registro,
+ * modificacion, eliminacion y consulta de atletas.
+ *
+ * @author Julian David Muñoz Revelo - 20251020042
+ * @author Juan Steban Avila Trujillo - 20251020054
+ * @author Juan Sneyder Méndez Gil - 20251020010
+ * @version 1.8
+ */
+ 
+/**
+ * URL base del BackEnd Spring Boot para los endpoints de atletas.
+ * @constant {string}
+ */
 
-//datos de prueba.
-//let significa que la variable puede cambiar.
-//Es un array de objetos, cada objeto es un atleta con sus propiedades. 
-//Se usa let y no const porque el array se reasigna al filtrar o eliminar.
-let listaAtletas =[
-    {id: 1, nombre:"Julian", identificacion: "123345", edad:"18", genero:"M",categoria:"Sub-23", especialidad:"Media Distancia"},
-    {id: 45, nombre:"yotas marcelo", identificacion:"1515", edad:"26", genero:"F" ,categoria:"Benjamin", especialidad:"Ultraman"}
-];
+const API_URL = "http://localhost:8080/triatleta";
 
-//le asignamos colores a las especialidades 
-//Mapea cada especialidad a una clase CSS de Bootstrap que define el color del borde. 
-//Se usa en CrearTarjetas y CrearCarrusel
+/**
+ * Lista global de atletas cargada desde el servidor.
+ * Se inicializa vacía y se llena con la respuesta del BackEnd.
+ * Se usa en todas las funciones de visualización y filtrado.
+ * @type {Array<Object>}
+ */
+
+let listaAtletas = [];
+
+/**
+ * Realiza una petición asíncrona al BackEnd para obtener todos los atletas registrados.
+ * Guarda los datos en la variable global listaAtletas, refresca la interfaz
+ * y actualiza el contador de atletas en el index.
+ * En caso de fallo muestra un mensaje de error al usuario.
+ *
+ * @async
+ * @function obtenerAtletasDelServidor
+ * @returns {Promise<void>}
+ */
+async function obtenerAtletasDelServidor(){
+    try{
+        const respuesta = await fetch(`${API_URL}/mostraratletas`); 
+        if (!respuesta.ok) throw new Error ("Error al obtener datos");
+        listaAtletas = await respuesta.json();
+        refrescarInterfaz();
+        const countAtletas = document.getElementById('count-atletas');
+        if (countAtletas) countAtletas.textContent = listaAtletas.length;
+    }
+    catch (error){
+        mostrarMensaje('error', 'No se pudo conectar al servidor');
+    }
+}
+
+/**
+ * Objeto que mapea cada especialidad de triatlón a una clase CSS de Bootstrap
+ * que define el color del borde de las tarjetas y el carrusel.
+ * Se usa en CrearTarjetas y CrearCarrusel.
+ * @constant {Object.<string, string>}
+ */
 const coloresEspecialidad = {
 
     'Super Sprint':     'border-success',
@@ -22,8 +66,11 @@ const coloresEspecialidad = {
     'Ultraman':         'border-dark'
 };
 
-// Iconos por especialidad
-//Se usa solo en CrearCarrusel
+/**
+ * Objeto que mapea cada especialidad de triatlón a un ícono de Bootstrap Icons.
+ * Se usa solo en CrearCarrusel para mostrar el ícono de cada especialidad.
+ * @constant {Object.<string, string>}
+ */
 const iconosEspecialidad = {
     'Super Sprint':   'bi-wind', 
     'Sprint': 'bi-lightning',
@@ -33,7 +80,18 @@ const iconosEspecialidad = {
     'Ultraman':  'bi-fire'
 };
 
-//calcula la categoria del atleta a registrar de forma automatica
+/**
+ * Calcula la categoría de competencia de un atleta según su edad.
+ * La categoría se determina según la reglamentación oficial de triatlon que manejamos.
+ *
+ * @function calcularCategoria
+ * @param {number|string} edad - Edad del atleta. Se convierte a entero internamente.
+ * @returns {string} Nombre de la categoría correspondiente a la edad.
+ *
+ * @example
+ * calcularCategoria(18); // returns 'Junior'
+ * calcularCategoria(45); // returns 'Veteranos'
+ */
 function calcularCategoria(edad) {
     edad = parseInt(edad);
     if (edad === 7)          return 'Pre-benjamin';
@@ -49,9 +107,15 @@ function calcularCategoria(edad) {
     return 'Sin categoria';
 }
 
-// oculta la parte de actualizar y eliminar de la lista.html
-//Los if evitan errores en páginas donde esos elementos no existen.
-//Comprueba si el elemento realmente existe en la página antes de actuar (para que no falle con las otras paginas)
+/**
+ * Oculta los paneles de confirmación de eliminación y modificación en listado.html.
+ * Los if evitan errores en páginas donde esos elementos no existen.
+ * Comprueba si el elemento realmente existe en la página antes de actuar
+ * para que no falle con las otras páginas.
+ *
+ * @function ocultarSecciones
+ * @returns {void}
+ */
 function ocultarSecciones() {
     const eliminar    = document.getElementById('contenedor-eliminar');
     const actualizar  = document.getElementById('contenedor-actualizar');
@@ -59,7 +123,20 @@ function ocultarSecciones() {
     if (actualizar) actualizar.classList.add('d-none');
 }
 
-// traduce el tipo de mensaje a la clase CSS de Bootstrap correspondiente.
+/**
+ * Muestra una alerta flotante en la esquina superior derecha de la pantalla.
+ * Traduce el tipo de mensaje a la clase CSS de Bootstrap correspondiente.
+ * La alerta desaparece automáticamente después de 3 segundos.
+ *
+ * @function mostrarMensaje
+ * @param {string} tipo - Tipo de mensaje. Valores válidos: 'exitoso', 'warning', 'error', 'sucess'.
+ * @param {string} texto - Texto que se mostrará dentro de la alerta.
+ * @returns {void}
+ *
+ * @example
+ * mostrarMensaje('exitoso', 'Atleta eliminado correctamente');
+ * mostrarMensaje('error', 'No se pudo conectar al servidor');
+ */
 function mostrarMensaje(tipo, texto) {
     // mapeo de tipo a clase Bootstrap
     const clases = {
@@ -86,12 +163,23 @@ function mostrarMensaje(tipo, texto) {
     // desaparece automáticamente en 3 segundos
     setTimeout(() => alerta.remove(), 3000);
 }    
-
+/**
+ * Variable global que almacena la especialidad actualmente seleccionada en el carrusel.
+ * Se usa para marcar visualmente la tarjeta activa al refrescar el carrusel.
+ * @type {string}
+ */
 let especialidadActiva = 'Todas';
 
-//Crea el carrusel del registro.
-//Busca el contenedor del carrusel. Si no existe (estamos en una pagina diferente a listado.html),sale inmediatamente 
-//con return para no generar errores.
+/**
+ * Crea y renderiza el carrusel horizontal de especialidades en listado.html.
+ * Busca el contenedor del carrusel. Si no existe (estamos en una página diferente
+ * a listado.html), sale inmediatamente con return para no generar errores.
+ * Extrae las especialidades únicas de listaAtletas, calcula cuántos atletas
+ * tiene cada una y genera las tarjetas del carrusel con su color e ícono correspondiente.
+ *
+ * @function CrearCarrusel
+ * @returns {void}
+ */
 function CrearCarrusel(){
     const seguimiento = document.getElementById('carrusel-t');
     if (!seguimiento) return;
@@ -122,8 +210,16 @@ function CrearCarrusel(){
     });
 }
 
-//filtra por especialidad que se selecciona de lista
-//se actualiza la variable global para que CrearCarrusel sepa cual marcar como activa al darle click
+/**
+ * Filtra la tabla y las tarjetas de atletas según la especialidad seleccionada en el carrusel.
+ * Actualiza la variable global especialidadActiva para que CrearCarrusel sepa
+ * cual marcar como activa al darle click.
+ * filter crea un nuevo array sin modificar el original.
+ *
+ * @function filtrarPorEspecialidad
+ * @param {string} esp - Nombre de la especialidad seleccionada. Si es 'todas' muestra todos los atletas.
+ * @returns {void}
+ */
 function filtrarPorEspecialidad(esp){
     especialidadActiva = esp;
     //filtro (filter crea un nuevo array)
@@ -137,18 +233,32 @@ function filtrarPorEspecialidad(esp){
     CrearCarrusel(); // refresca el carrusel para que se marque
 }
 
-//recarga la interfaz, evita bloqueos o fallos
-//esto evita errores en páginas como consulta.html o registro.html donde la tabla y las tarjetas no existen.
+/**
+ * Recarga toda la interfaz visual con los datos actuales de listaAtletas.
+ * Evita bloqueos o fallos usando if para verificar que los elementos existen
+ * antes de llamar cada función. Esto evita errores en páginas como consulta.html
+ * o registro.html donde la tabla y las tarjetas no existen.
+ *
+ * @function refrescarInterfaz
+ * @returns {void}
+ */
+
 function refrescarInterfaz() {
     CrearCarrusel();
     if (document.getElementById('tabla-atletas-body')) CrearTabla(listaAtletas);
     if (document.getElementById('vista-tarjetas'))     CrearTarjetas(listaAtletas);
 }
 
-//crea los datos 
-//Cada vez que se agrega o borra a alguien, se llama esta función para que actualice la vista
-//document.getElementById(...) va al html y agarra especificamente el contenedor de la tabla
-//esto toma la lista de personas que estan guardadas y convertirla en etiquetas <tr> y <td>
+/**
+ * Genera y renderiza la tabla HTML de atletas en listado.html.
+ * Cada vez que se agrega o borra a alguien, se llama esta funcion para que actualice la vista.
+ * document.getElementById va al HTML y agarra especificamente el contenedor de la tabla.
+ * Toma la lista de atletas guardada y la convierte en etiquetas tr y td.
+ *
+ * @function CrearTabla
+ * @param {Array<Object>} listaAtletas - Array de objetos atleta a renderizar en la tabla.
+ * @returns {void}
+ */
 function CrearTabla(listaAtletas){
     // se busca el cuerpo de la tabla por su ID
     const cuerpoTabla = document.getElementById('tabla-atletas-body');
@@ -186,7 +296,15 @@ function CrearTabla(listaAtletas){
     });
 }
 
-// se crean las tarjetas de forma automatica
+/**
+ * Genera y renderiza las tarjetas visuales de atletas en listado.html.
+ * Cada tarjeta muestra la foto, nombre, ID, categoría y especialidad del atleta,
+ * con el color de borde correspondiente a su especialidad según coloresEspecialidad.
+ *
+ * @function CrearTarjetas
+ * @param {Array<Object>} listaAtletas - Array de objetos atleta a renderizar como tarjetas.
+ * @returns {void}
+ */
 function CrearTarjetas(listaAtletas){
     const contenedor = document.getElementById('vista-tarjetas');
     //limpia el contenido previo
@@ -226,81 +344,105 @@ function CrearTarjetas(listaAtletas){
     });
 }
 
-//la eliminacion antes de la confirmacion
+/**
+ * Prepara y muestra el panel de confirmación de eliminación de un atleta.
+ * Busca el atleta por ID en listaAtletas, llena el panel con su nombre e identificación,
+ * lo hace visible y hace scroll suave hasta él para que el usuario lo vea.
+ * innerText cambia solo el texto dentro de una etiqueta evitando que se inyecte HTML.
+ *
+ * @function prepararEliminacion
+ * @param {number} idRecibido - ID del atleta que se desea eliminar.
+ * @returns {void}
+ */
 function prepararEliminacion(idRecibido){
-    //se busca el atleta, guarda la informacion en atletaencontrado
-    //Recorre el arreglo devuelve el objeto completo del atleta que coincida con el id
     const atletaEncontrado = listaAtletas.find(a=> a.id === idRecibido);
     
     if (atletaEncontrado){
-        // se llenan los textos de confirmacion que se muestran 
-        //innerText Cambia solo el texto dentro de una etiqueta evitando que se inyecte HTML
         document.getElementById('eliminar-nombre-texto').innerText = atletaEncontrado.nombre;
         document.getElementById('eliminar-id-texto').innerText = atletaEncontrado.identificacion;
-        
-        //se muestra el panel de eliminacion, se quita el d-none. se ocultan lo otro
         document.getElementById('contenedor-eliminar').classList.remove('d-none');
-        //se le agrega el d-none a pesar que ya tenga uno, el otro es que al refrescar no se vea. este se recarga la pagina y se quita
         document.getElementById('contenedor-actualizar').classList.add('d-none');
         
-        //botones de realizar accion de borrado
         const btnFinal = document.getElementById('btn-confirmar-borrado');
-        btnFinal.onclick =() => ejecutarEliminacionReal(idRecibido);
+        btnFinal.onclick = () => ejecutarEliminacionReal(atletaEncontrado.identificacion);
         
-        //funcion que se encontro para una mejora visual 
-        //Scroll suave hacia el panel para que el usuario lo vea
-        //se encarga de que el navegador haga "scroll" (desplace la pantalla) automaticamente hasta el elemento que acabas de mostrar.
         document.getElementById('contenedor-eliminar').scrollIntoView({behavior: 'smooth'});
     }
 }
 
-//crea un nuevo array con todos los atletas excepto el que tiene ese id. 
-//Se reasigna a listaAtletas reemplazando el array anterior.
-function ejecutarEliminacionReal(idABorrar){
-    //se filtra para quedarse con todo menos lo que sea el mismo id
-    listaAtletas = listaAtletas.filter(a => a.id !== idABorrar);
-    
-    //se limpia la interfaz
-    ocultarSecciones(); //se esconde el de alerta
-    refrescarInterfaz();//vuelve a dibujar la tabla sin el atleta
-    mostrarMensaje('exitoso','atleta eliminado');
-}
 
+/**
+ * Ejecuta la eliminación definitiva de un atleta de listaAtletas.
+ * Crea un nuevo array con todos los atletas excepto el que tiene ese ID
+ * y lo reasigna a listaAtletas reemplazando el array anterior.
+ * Luego oculta los paneles, refresca la interfaz y muestra un mensaje de éxito.
+ *
+ * @function ejecutarEliminacionReal
+ * @param {number} idABorrar - ID del atleta que se eliminará definitivamente.
+ * @returns {void}
+ */
+async function ejecutarEliminacionReal(idRecibido) {
+    // idRecibido acá es la identificacion (cédula) del atleta
+    try {
+        const resp = await fetch(`${API_URL}/eliminar/${idRecibido}`, {
+            method: 'DELETE',
+            headers: { 'Accept': 'application/json' }
+        });
+        if (!resp.ok) throw new Error('Error al eliminar');
+        ocultarSecciones();
+        mostrarMensaje('exitoso', 'Atleta eliminado correctamente.');
+        await obtenerAtletasDelServidor();
+    } catch (e) {
+        mostrarMensaje('error', 'No se pudo eliminar el atleta.');
+    }
+}
+/**
+ * Prepara y muestra el formulario de modificación con los datos actuales del atleta.
+ * Busca el atleta por ID, precarga sus datos en los campos del formulario,
+ * muestra el panel de actualización y oculta el de eliminación.
+ * Hace scroll suave hasta el formulario para que el usuario lo vea.
+ *
+ * @function prepararModificacion
+ * @param {number} idRecibido - ID del atleta cuyos datos se van a modificar.
+ * @returns {void}
+ */
 function prepararModificacion(idRecibido){
-    //se busca el atleta, guarda la informacion en atletaencontrado
-    //Recorre el arreglo devuelve el objeto completo del atleta que coincida con el id
     const atleta = listaAtletas.find(a => a.id === idRecibido);
     
     if (atleta){
-        //se carga los datos actuales en los inputs del formulario de actualización
-        document.getElementById('modificacion-id-original').value = atleta.id;
+        document.getElementById('modificacion-id-original').value = atleta.identificacion; 
         document.getElementById('modificacion-nombre').value = atleta.nombre;
         document.getElementById('modificacion-identificacion').value = atleta.identificacion;
         document.getElementById('modificacion-categoria').value = atleta.categoria;
         document.getElementById('modificacion-especialidad').value = atleta.especialidad;
         
-        //se muestra el formulario de actualizacion y se oculta el de eliminar
         document.getElementById('contenedor-actualizar').classList.remove('d-none');
         document.getElementById('contenedor-eliminar').classList.add('d-none');
-        
         document.getElementById('contenedor-actualizar').scrollIntoView({behavior: 'smooth'});
     }
 }
 
-//filtros de la consulta
-//se usa en consulta.html y aplicarfiltros()
-function consultarAtletas(lista) {
+/**
+ * Renderiza la tabla de resultados en consulta.html con la lista de atletas recibida.
+ * Muestra u oculta el mensaje de "no se encontraron resultados" dependiendo
+ * si la lista está vacía. Se usa en consulta.html y es llamada por aplicarFiltros().
+ *
+ * @function consultarAtletas
+ * @param {Array<Object>} listaAtletas - Array de atletas a mostrar en la tabla de consulta.
+ * @returns {void}
+ */
+function consultarAtletas(listaAtletas) {
     const cuerpo = document.getElementById('tabla-consulta-body');
     if (!cuerpo) return;
     cuerpo.innerHTML = '';
     //se muestra o oculta el mensaje de "no se encontraron resultados" dependiendo si la lista esta vacia.
     const sinResultados = document.getElementById('mensaje-sin-resultados');
 
-    if (lista.length === 0) {
+    if (listaAtletas.length === 0) {
         sinResultados.classList.remove('d-none');
     } else {
         sinResultados.classList.add('d-none');
-        lista.forEach(atleta => {
+        listaAtletas.forEach(atleta => {
             const fila = document.createElement('tr');
             fila.innerHTML = `
                 <td>${atleta.identificacion}</td>
@@ -309,38 +451,52 @@ function consultarAtletas(lista) {
                 <td>${atleta.genero === 'M' ? 'Masculino' : atleta.genero === 'F' ? 'Femenino' : '—'}</td>
                 <td><span class="badge bg-info text-dark">${atleta.categoria}</span></td>
                 <td>${atleta.especialidad}</td>
-                <td>${atleta.esCross ? '<span class="badge bg-success">Sí</span>' : '<span class="badge bg-secondary">No</span>'}</td>
+                <td>${atleta.modalidadCross ? '<span class="badge bg-success">Sí</span>' : '<span class="badge bg-secondary">No</span>'}</td>
             `;
             cuerpo.appendChild(fila);
         });
     }
 }
 
+/**
+ * Lee los valores de todos los filtros de consulta.html y filtra listaAtletas
+ * según los criterios seleccionados. Crea una copia del array original que
+ * se va reduciendo con cada filtro activo sin modificar el original.
+ * includes busca si la identificación contiene el texto escrito (búsqueda parcial).
+ * Convierte true/false a texto para compararlo con el valor del select.
+ * Al final llama consultarAtletas con la lista filtrada.
+ *
+ * @function aplicarFiltros
+ * @returns {void}
+ */
 function aplicarFiltros() {
-    //.trim() elimina espacios al inicio y al final
-    const buscarId    = document.getElementById('buscar-id')?.value.trim().toLowerCase();
-    const genero      = document.getElementById('filtro-genero')?.value;
-    const categoria   = document.getElementById('filtro-categoria')?.value.toLowerCase();
+    const buscarId     = document.getElementById('buscar-id')?.value.trim().toLowerCase();
+    const genero       = document.getElementById('filtro-genero')?.value;
+    const categoria    = document.getElementById('filtro-categoria')?.value.toLowerCase();
     const especialidad = document.getElementById('filtro-especialidad')?.value;
-    const cross = document.getElementById('filtro-cross')?.value;
-    //crea una copia del array original
-    //se reducira con cada filtro
+    const cross        = document.getElementById('filtro-cross')?.value;
+
     let lista = [...listaAtletas];
-    //includes busca si la identificación contiene el texto escrito 
     if (buscarId)     lista = lista.filter(a => a.identificacion.toLowerCase().includes(buscarId));
     if (genero)       lista = lista.filter(a => a.genero === genero);
     if (categoria)    lista = lista.filter(a => a.categoria.toLowerCase() === categoria);
     if (especialidad) lista = lista.filter(a => a.especialidad === especialidad);
-    //convierte true/false a texto 'true'/'false' para compararlo con el valor del select que tambien es texto.
-    if (cross !== '') lista = lista.filter(a => String(a.esCross) === cross);
+    if (cross !== '')  lista = lista.filter(a => String(a.modalidadCross) === cross); 
 
     consultarAtletas(lista);
 }
 
-const countAtletas = document.getElementById('count-atletas');
-if (countAtletas) countAtletas.textContent = listaAtletas.length;
-
-//maneja la seleccion visual 
+/**
+ * Maneja la selección visual de una especialidad en el carrusel de imágenes (Swiper)
+ * del formulario de registro. Guarda el valor en el input oculto del formulario,
+ * limpia la selección anterior de todas las tarjetas y marca visualmente
+ * la tarjeta seleccionada con el borde amarillo mediante la clase 'selected'.
+ * También muestra el indicador con el nombre de la especialidad elegida.
+ *
+ * @function seleccionarEspecialidad
+ * @param {string} valor - Nombre de la especialidad seleccionada en el Swiper.
+ * @returns {void}
+ */
 function seleccionarEspecialidad(valor) {
     document.getElementById('input-especialidad').value = valor;
     //decuelve todas las tarjetas y se les quita la clase selected a todas para limpiar la selección anterior
@@ -361,59 +517,80 @@ function seleccionarEspecialidad(valor) {
     }
 }
 
+/**
+ * Listener del formulario de registro de atletas.
+ * Captura el evento submit, construye el objeto nuevoAtleta con los valores
+ * de los campos del formulario, calcula la categoría automáticamente según la edad,
+ * lee la especialidad del Swiper mediante el input oculto, y agrega el atleta
+ * a listaAtletas. El typeof verifica que refrescarInterfaz existe y es una función
+ * antes de llamarla, evitando el error 'refrescarInterfaz is not a function'.
+ * id se genera con Date.now() para garantizar que siempre sea único.
+ */
 // para el formulario de registro (index.html o registro.html)
 const formRegistro = document.getElementById('form-registro');
-
-if (formRegistro){
-    formRegistro.addEventListener('submit', function(e){
+if (formRegistro) {
+    formRegistro.addEventListener('submit', async function (e) {
         e.preventDefault();
-        
-        //se crea el nuevo objeto de atleta capturando los valores
-        const nuevoAtleta ={
-            //se crea un id respecto de tiempo siempre seran distintos
-            //es una forma que vi por un video 
-            id:             Date.now(),
-            nombre:         document.getElementById('nombre').value,
-            identificacion: document.getElementById('identificacion').value,
-            edad:           document.getElementById('edad').value,
+
+        const nuevoAtleta = {
+            nombre:         document.getElementById('nombre').value.trim(),
+            identificacion: document.getElementById('identificacion').value.trim(),
+            edad:           parseInt(document.getElementById('edad').value),
             genero:         document.getElementById('genero').value,
-            categoria:      calcularCategoria(document.getElementById('edad').value), // calculo de categoria
-            especialidad:   document.getElementById('input-especialidad').value,      // lee el swiper o slides 
-            esCross:        document.getElementById('esCross').checked
+            correo:         document.getElementById('correo').value.trim(),
+            especialidad:   document.getElementById('input-especialidad').value,
+            modalidadCross: document.getElementById('esCross').checked
         };
-        //.push añade uno o más elementos al final del la lista de atletas 
-        listaAtletas.push(nuevoAtleta);
-        
-        formRegistro.reset();
-        mostrarMensaje('sucess', 'se guardo atleta nuevo');
-        // El typeof verifica que si existe y es una funcion antes de llamarla, evitando el error refrescarInterfaz is not a function
-        if (typeof refrescarInterfaz === "function"){
-            refrescarInterfaz();
+
+        try {
+            const resp = await fetch(`${API_URL}/crearatleta`, {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(nuevoAtleta)
+            });
+            if (!resp.ok) throw new Error('Error al registrar');
+            formRegistro.reset();
+            mostrarMensaje('sucess', '¡Atleta registrado correctamente!');
+            await obtenerAtletasDelServidor();
+        } catch (e) {
+            mostrarMensaje('error', 'No se pudo registrar. Revisá la consola (F12).');
         }
     });
 }
 
-//se ejecuta cargar la pagina
-//espera a que todo el HTML se haya dibujado y los archivos CSS se hayan cargado antes de intentar llenar la tabla
-//los listeners de los botones que creamos para listado.html
-// todo el codigo dentro solo se ejecuta cuando el navegador termino de leer y construir todo el HTML. 
-// sin esto, getElementById devolveria null porque los elementos aún no existen.
+/**
+ * Evento principal que se ejecuta cuando el navegador termina de cargar y construir
+ * todo el HTML. Sin esto, getElementById devolvería null porque los elementos
+ * aún no existen. Inicializa todos los listeners de botones y elementos interactivos
+ * de las páginas listado.html, consulta.html y registro.html.
+ * 
+ * espera a que todo el HTML se haya dibujado y los archivos CSS se hayan cargado 
+ * antes de intentar llenar la tabla
+ *
+ * @event DOMContentLoaded
+ */
 document.addEventListener('DOMContentLoaded', () => {
     
-    refrescarInterfaz();
-    //cantidad de atletas que aparece en el index
-    const countAtletas = document.getElementById('count-atletas');
-    if (countAtletas) countAtletas.textContent = listaAtletas.length;
+    obtenerAtletasDelServidor();
 
     const btnTabla = document.getElementById('vista-table-btn');
     const btnTarjetas = document.getElementById('vista-cards-btn');
     const vistaTabla = document.getElementById('vista-tabla');
     const vistaTarjetas = document.getElementById('vista-tarjetas');
     
-//cambio de forma de visualizar tabla y cartas
-//Sirve para que la pagina decida qué dibujar en la pantalla dependiendo el estado de la variable llamada vista
-//Comprueba si el valor de esa variable es exactamente el texto "tabla"
-
+/**
+     * Cambia la vista entre tabla y tarjetas en listado.html.
+     * Sirve para que la página decida qué dibujar en la pantalla
+     * dependiendo el estado de la variable llamada vista.
+     * Comprueba si el valor de esa variable es exactamente el texto "tabla".
+     *
+     * @function cambiarVista
+     * @param {string} vista - Vista a mostrar. Valores válidos: 'tabla' o cualquier otro valor para tarjetas.
+     * @returns {void}
+     */
 function cambiarVista(vista){
     if (vista === 'tabla'){
         //mostrar tabla, se ocultan las tarjetas
@@ -474,6 +651,46 @@ if (filtroEspecialidad) filtroEspecialidad.addEventListener('change', aplicarFil
 // Cargar todos al entrar a la página
 if (document.getElementById('tabla-consulta-body')) {
     consultarAtletas(listaAtletas);
+}
+
+const formActualizar = document.getElementById('form-actualizar');
+if (formActualizar) {
+    formActualizar.addEventListener('submit', async function (e) {
+        e.preventDefault();
+        const identificacionOriginal = document.getElementById('modificacion-id-original').value;
+        const nuevoNombre            = document.getElementById('modificacion-nombre').value.trim();
+        const nuevaIdentificacion    = document.getElementById('modificacion-identificacion').value.trim();
+        const nuevaCategoria         = document.getElementById('modificacion-categoria').value.trim();
+
+        try {
+            if (nuevoNombre) {
+                await fetch(`${API_URL}/modificarnombre/${identificacionOriginal}`, {
+                    method: 'PATCH',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ nombre: nuevoNombre })
+                });
+            }
+            if (nuevaCategoria) {
+                await fetch(`${API_URL}/modificarcategoria/${identificacionOriginal}`, {
+                    method: 'PATCH',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ categoria: nuevaCategoria })
+                });
+            }
+            if (nuevaIdentificacion && nuevaIdentificacion !== identificacionOriginal) {
+                await fetch(`${API_URL}/modificaridentificacion/${identificacionOriginal}`, {
+                    method: 'PATCH',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ identificacion: nuevaIdentificacion })
+                });
+            }
+            ocultarSecciones();
+            mostrarMensaje('exitoso', 'Atleta actualizado correctamente.');
+            await obtenerAtletasDelServidor();
+        } catch (e) {
+            mostrarMensaje('error', 'No se pudo actualizar el atleta.');
+        }
+    });
 }
 
 const mySwiperEl = document.querySelector('.mySwiper');

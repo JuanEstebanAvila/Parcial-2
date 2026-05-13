@@ -1,5 +1,6 @@
 package co.edu.udistrital.backend.model;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
@@ -30,5 +31,10 @@ public class Atleta extends Persona {
 
     private Boolean modalidadCross;
 
+     /**
+     * Foto del atleta
+     * Se define como LONGTEXT para soportar imágenes de cualquier tamaño.
+     */
+    @Column(columnDefinition = "LONGTEXT")
     private String foto;
 }
