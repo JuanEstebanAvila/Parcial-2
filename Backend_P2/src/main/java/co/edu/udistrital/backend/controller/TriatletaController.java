@@ -120,11 +120,13 @@ public class TriatletaController {
     //Método para crear un triatleta. *
     @RequestMapping(value = "/crearatleta", method = RequestMethod.POST)
     public ResponseEntity<ResponseDTO> crearAtleta(@Valid @RequestBody RequestDTO datosNuevoAtleta) {
-        try {
-            return ResponseEntity.ok(service.postAtleta(datosNuevoAtleta));
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
-        }
+    try {
+        ResponseDTO creado = service.postAtleta(datosNuevoAtleta);
+        service.enviarCorreo(datosNuevoAtleta);
+        return ResponseEntity.ok(creado);
+    } catch (RuntimeException e) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+    }
     }
 
     //Método para mostrar el listado de todos los triatletas. 

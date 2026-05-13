@@ -32,29 +32,20 @@ public class TriatletaService implements IMicroservicios {
     private JavaMailSender mailSender;
 
     //Asunto del correo de registro, definido en application.properties. 
-    @Value("${correo.asunto}")
-    private String asuntoCorreo;
-
-    //Plantilla del cuerpo del correo, definida en application.properties. 
-    @Value("${correo.mensaje}")
-    private String plantillaCorreo;
+    @Value("${spring.mail.username}")
+    private String remitente;
 
     //CREAR ATLETA - MÉTODO POST
     @Override
     public ResponseDTO postAtleta(RequestDTO datosNuevoAtleta) {
-        if (repository.findByIdentificacion(String.valueOf(datosNuevoAtleta.getIdentificacion())).isPresent()) {
-            throw new RuntimeException(
-                    "Ya existe un atleta con la identificación " + datosNuevoAtleta.getIdentificacion());
-        }
-        Atleta atleta = aEntidad(datosNuevoAtleta);
-        atleta.setCategoria(calcularCategoria(datosNuevoAtleta.getEdad()));
-        Atleta guardado = repository.save(atleta);
-        try {
-            enviarCorreo(datosNuevoAtleta);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return aResponse(guardado);
+    if (repository.findByIdentificacion(datosNuevoAtleta.getIdentificacion()).isPresent()) {
+        throw new RuntimeException(
+                "Ya existe un atleta con la identificación " + datosNuevoAtleta.getIdentificacion());
+    }
+    Atleta atleta = aEntidad(datosNuevoAtleta);
+    atleta.setCategoria(calcularCategoria(datosNuevoAtleta.getEdad()));
+    Atleta guardado = repository.save(atleta);
+    return aResponse(guardado);
     }
 
     //MOSTRAR - MÉTODO GET
@@ -142,11 +133,13 @@ public class TriatletaService implements IMicroservicios {
      */
     @Override
     public void enviarCorreo(RequestDTO atleta) {
-        String contenido = plantillaCorreo.replace("{nombre}", atleta.getNombre()); //"Plantilla" definida en el properties
+        String contenido = "¡¡Hola " + atleta.getNombre() + " y bienvenid@ al triatlon!!" + "\n" + "MUCHOS EXITOS!!!";
+        String asuntoCorreo = "!BIENVENID@ AL TRIATLÓN";
         SimpleMailMessage correo = new SimpleMailMessage();
         correo.setTo(atleta.getCorreo());//A quier se envía
         correo.setSubject(asuntoCorreo);//El asunto del correo 
         correo.setText(contenido);//El contenido del correo 
+        correo.setFrom(remitente);
         mailSender.send(correo);
     }
 
